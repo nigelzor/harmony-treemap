@@ -5786,16 +5786,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      */
     @Override
     public SortedMap<K, V> subMap(K startKey, K endKey) {
-        if (comparator == null) {
-            if (toComparable(startKey).compareTo(endKey) <= 0) {
-                return new SubMap<K, V>(startKey, this, endKey);
-            }
-        } else {
-            if (comparator.compare(startKey, endKey) <= 0) {
-                return new SubMap<K, V>(startKey, this, endKey);
-            }
-        }
-        throw new IllegalArgumentException();
+        return subMap(startKey, true, endKey, false);
     }
 
     /**
