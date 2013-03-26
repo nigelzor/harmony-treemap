@@ -17,20 +17,57 @@
 
 package com.pulseenergy.org.apache.harmony.java.util;
 
+import java.util.ArrayList;
 import java.util.SortedMap;
 
 public class TreeMapMoreTest extends junit.framework.TestCase {
 
     public void test_SubMap() {
-        TreeMap<Integer,Integer> tm = new TreeMap<Integer,Integer>();
-        for (int i = 0; i < 65; i++) {
-            tm.put(i, i);
-        }
+        TreeMap<Integer, Integer> tm = buildTree(65);
 
         SortedMap<Integer,Integer> subMap = tm.subMap(0, 64);
 
+        assertEquals((Integer) 0, subMap.firstKey());
         assertEquals((Integer) 63, subMap.lastKey());
         assertEquals(64, subMap.size());
+    }
+
+    public void test_SubMap2() {
+        TreeMap<Integer, Integer> tm = buildTree(65);
+
+        SortedMap<Integer,Integer> subMap = tm.descendingMap().subMap(64, 0);
+
+        assertEquals((Integer) 64, subMap.firstKey());
+        assertEquals((Integer) 1, subMap.lastKey());
+        assertEquals(64, subMap.size());
+    }
+
+    public void test_SubMapValues() {
+        TreeMap<Integer, Integer> tm = buildTree(80);
+
+        ArrayList<Integer> values = new ArrayList<Integer>(tm.subMap(20, 60).values());
+
+        assertEquals(40, values.size());
+        assertEquals((Integer) 20, values.get(0));
+        assertEquals((Integer) 59, values.get(values.size() - 1));
+    }
+
+    public void test_SubMapValues2() {
+        TreeMap<Integer, Integer> tm = buildTree(80);
+
+        ArrayList<Integer> values = new ArrayList<Integer>(tm.descendingMap().subMap(60, 20).values());
+
+        assertEquals(40, values.size());
+        assertEquals((Integer) 60, values.get(0));
+        assertEquals((Integer) 21, values.get(values.size() - 1));
+    }
+
+    private static TreeMap<Integer, Integer> buildTree(int size) {
+        TreeMap<Integer,Integer> tm = new TreeMap<Integer,Integer>();
+        for (int i = 0; i < size; i++) {
+            tm.put(i, i);
+        }
+        return tm;
     }
 
 }
