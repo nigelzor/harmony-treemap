@@ -357,6 +357,18 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		}
 	}
 
+	static class AscendingSubMapValueIterator<K, V> extends AscendingSubMapIterator<K, V> implements Iterator<V> {
+
+		AscendingSubMapValueIterator(NavigableSubMap<K, V> map) {
+			super(map);
+		}
+
+		@Override
+		public final V next() {
+			return getNext().value;
+		}
+	}
+
 	private abstract static class DescendingSubMapIterator<K, V> extends AbstractSubMapIterator<K, V> {
 
 		DescendingSubMapIterator(NavigableSubMap<K, V> map) {
@@ -495,6 +507,18 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public final K next() {
 			return getNext().key;
+		}
+	}
+
+	static class DescendingSubMapValueIterator<K, V> extends DescendingSubMapIterator<K, V> implements Iterator<V> {
+
+		DescendingSubMapValueIterator(NavigableSubMap<K, V> map) {
+			super(map);
+		}
+
+		@Override
+		public final V next() {
+			return getNext().value;
 		}
 	}
 
@@ -2258,46 +2282,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 			return null;
 		}
-
-		@Override
-		public Collection<V> values() {
-			if (valuesCollection == null) {
-				if (!this.toEnd && !this.fromStart) {
-					valuesCollection = super.values();
-				} else {
-					Map.Entry<K, V> startEntry;
-					if (loInclusive) {
-						startEntry = fromStart ? m.ceilingEntry(this.lo) : theSmallestEntry();
-					} else {
-						startEntry = fromStart ? m.findHigherEntry(this.lo) : theSmallestEntry();
-					}
-					if (startEntry == null) {
-						K key = m.isEmpty() ? this.lo : m.firstKey();
-						valuesCollection = new SubMapValuesCollection<K, V>(new SubMap<K, V>(key, true, this.m, key, true));
-						return valuesCollection;
-					}
-					// for submap, the lastKey is always exclusive, so should
-					// take care
-					Map.Entry<K, V> lastEntry;
-					lastEntry = toEnd ? m.ceilingEntry(this.hi) : null;
-					if (lastEntry != null) {
-						if (hiInclusive && lastEntry.getKey().equals(this.hi)) {
-							lastEntry = m.higherEntry(this.hi);
-						}
-					}
-
-					K startK = startEntry == null ? null : startEntry.getKey();
-					K lastK = lastEntry == null ? null : lastEntry.getKey();
-					// submap always exclude the highest entry
-					valuesCollection = new SubMapValuesCollection<K, V>(new SubMap<K, V>(startK, true, this.m, lastK, lastK == null ? false : toEnd));
-				}
-			}
-			return valuesCollection;
-		}
 	}
 
 	static class AscendingSubMap<K, V> extends NavigableSubMap<K, V> implements Serializable {
-
 		private static final long serialVersionUID = 912986545866124060L;
 
 		AscendingSubMap(K start, boolean startKeyInclusive, TreeMap<K, V> map, K end, boolean endKeyInclusive) {
@@ -2481,6 +2468,37 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				return new AscendingSubMap<K, V>(start, inclusive, m);
 			} else {
 				return this;
+			}
+		}
+
+		@Override
+		public Collection<V> values() {
+			if (valuesCollection == null) {
+				valuesCollection = new AscendingSubMapValuesCollection<K, V>(this);
+			}
+			return valuesCollection;
+		}
+
+		static class AscendingSubMapValuesCollection<K, V> extends AbstractCollection<V> {
+			AscendingSubMap<K, V> subMap;
+
+			public AscendingSubMapValuesCollection(AscendingSubMap<K, V> subMap) {
+				this.subMap = subMap;
+			}
+
+			@Override
+			public Iterator<V> iterator() {
+				return new AscendingSubMapValueIterator<K, V>(subMap);
+			}
+
+			@Override
+			public int size() {
+				return subMap.size();
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return subMap.isEmpty();
 			}
 		}
 	}
@@ -2757,10 +2775,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Collection<V> values() {
 			if (valuesCollection == null) {
-				if (fromStart || toEnd) {
-					return valuesCollection = new DescendingSubMapValuesCollection<K, V>(this);
-				}
-				valuesCollection = super.values();
+				valuesCollection = new DescendingSubMapValuesCollection<K, V>(this);
 			}
 			return valuesCollection;
 		}
@@ -2779,49 +2794,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 			@Override
 			public Iterator<V> iterator() {
-				TreeMap.Entry<K, V> from = subMap.m.find(subMap.firstKey());
-				TreeMap.Entry<K, V> to = subMap.m.findLowerEntry(subMap.lastKey());
-				return new DescendingValueIterator<K, V>(from.node, from == null ? 0 : from.index, subMap, to == null ? null : to.node, to == null ? 0
-						: to.index);
-			}
-
-			static class DescendingValueIterator<K, V> extends BoundedMapIterator<K, V> implements Iterator<V> {
-
-				public DescendingValueIterator(Node<K, V> startNode, int startOffset, DescendingSubMap<K, V> map, Node<K, V> finalNode, int finalOffset) {
-					super(startNode, startOffset, map.m, finalNode, finalOffset);
-					node = startNode;
-					offset = startOffset;
-				}
-
-				@Override
-				public V next() {
-					if (!hasNext()) {
-						throw new NoSuchElementException();
-					}
-					if (node != null) {
-						boolean endOfIterator = lastNode == finalNode && lastOffset == finalOffset;
-						if (endOfIterator) {
-							node = null;
-						} else {
-							if (expectedModCount != backingMap.modCount) {
-								throw new ConcurrentModificationException();
-							} else if (node == null) {
-								throw new NoSuchElementException();
-							}
-							lastNode = node;
-							lastOffset = offset;
-							if (offset != node.left_idx) {
-								offset--;
-							} else {
-								node = node.prev;
-								if (node != null) {
-									offset = node.right_idx;
-								}
-							}
-						}
-					}
-					return lastNode.values[lastOffset];
-				}
+				return new DescendingSubMapValueIterator<K, V>(subMap);
 			}
 
 			@Override

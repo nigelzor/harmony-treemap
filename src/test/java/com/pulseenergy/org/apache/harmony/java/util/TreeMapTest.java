@@ -2006,16 +2006,25 @@ public class TreeMapTest extends junit.framework.TestCase {
         assertTrue(sm.values().size() == 0);
     }
 
-        public static TreeMap treeMap = new TreeMap();
+    public void test_subMap_values_1(){
+        tm = new TreeMap();
+        tm.put("firstKey", "firstValue");
+        tm.put("secondKey", "secondValue");
+        tm.put("thirdKey", "thirdValue");
+        Object firstKey = tm.firstKey();
+        SortedMap subMap = ((SortedMap)tm).subMap(firstKey, firstKey);
+        Iterator iter = subMap.values().iterator();
+    }
 
-        public void test_values_1(){
-            treeMap.put("firstKey", "firstValue");
-            treeMap.put("secondKey", "secondValue");
-            treeMap.put("thirdKey", "thirdValue");
-            Object firstKey = treeMap.firstKey();
-            SortedMap subMap = ((SortedMap)treeMap).subMap(firstKey, firstKey);
-            Iterator iter = subMap.values().iterator();
-        }
+    public void test_descending_subMap_values_1(){
+        tm = new TreeMap();
+        tm.put("firstKey", "firstValue");
+        tm.put("secondKey", "secondValue");
+        tm.put("thirdKey", "thirdValue");
+        Object firstKey = tm.firstKey();
+        SortedMap subMap = tm.descendingMap().subMap(firstKey, firstKey);
+        Iterator iter = subMap.values().iterator();
+    }
 
     /**
      * Sets up the fixture, for example, open a network connection. This method
