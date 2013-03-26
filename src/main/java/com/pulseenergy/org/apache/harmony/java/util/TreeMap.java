@@ -157,7 +157,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public V setValue(V object) {
+        public V setValue(V object) {
             V result = value;
             value = object;
             this.node.values[index] = value;
@@ -179,8 +179,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         int offset;
 
         int lastOffset;
-
-        boolean getToEnd = false;
 
         AbstractSubMapIterator(final NavigableSubMap<K, V> map) {
             subMap = map;
@@ -285,7 +283,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		final TreeMap.Entry<K, V> getBoundaryNode() {
+        final TreeMap.Entry<K, V> getBoundaryNode() {
             TreeMap.Entry<K, V> entry = null;
             if (subMap.toEnd) {
                 entry = subMap.hiInclusive ? subMap
@@ -352,7 +350,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final Map.Entry<K, V> next() {
+        public final Map.Entry<K, V> next() {
             return getNext();
         }
     }
@@ -365,7 +363,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final K next() {
+        public final K next() {
             return getNext().key;
         }
     }
@@ -417,7 +415,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		final TreeMap.Entry<K, V> getBoundaryNode() {
+        final TreeMap.Entry<K, V> getBoundaryNode() {
             if (subMap.toEnd) {
                 return subMap.hiInclusive ? subMap.m.findCeilingEntry(subMap.hi) : subMap.m.findHigherEntry(subMap.hi);
             }
@@ -455,7 +453,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final void remove() {
+        public final void remove() {
             if (expectedModCount == subMap.m.modCount) {
                 if (expectedModCount == subMap.m.modCount) {
                     K key = (node != null) ? node.keys[offset] : null;
@@ -497,7 +495,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final Map.Entry<K, V> next() {
+        public final Map.Entry<K, V> next() {
             return getNext();
         }
     }
@@ -510,7 +508,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final K next() {
+        public final K next() {
             return getNext().key;
         }
     }
@@ -631,7 +629,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Comparator<? super K> comparator() {
+        public Comparator<? super K> comparator() {
             return backingMap.comparator();
         }
 
@@ -754,7 +752,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K firstKey() {
+        public K firstKey() {
             if (backingMap.size > 0 && !(startKey.equals(endKey))) {
                 if (!hasStart) {
                     Node<K, V> node = minimum(backingMap.root);
@@ -782,7 +780,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> headMap(K endKey) {
+        public SortedMap<K, V> headMap(K endKey) {
             Comparator<? super K> cmp = backingMap.comparator;
             if (cmp == null) {
                 Comparable<K> object = toComparable(endKey);
@@ -896,7 +894,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K lastKey() {
+        public K lastKey() {
             if (backingMap.size > 0 && !(startKey.equals(endKey))) {
                 if (!hasEnd) {
                     Node<K, V> node = maximum(backingMap.root);
@@ -912,11 +910,11 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
                         if (backingMap.cmp(object,  endKey, lastKeyNode.keys[lastKeyIndex]) != 0) {
                             return lastKeyNode.keys[lastKeyIndex];
                         } else {
-						        // according to subMap, it excludes the last element
+                            // according to subMap, it excludes the last element
                             if (lastKeyIndex != lastKeyNode.left_idx) {
                                 object = backingMap.comparator == null ? toComparable(startKey)
                                         : null;
-							    // check if the element is smaller than the startkey, there's no lastkey
+                                // check if the element is smaller than the startkey, there's no lastkey
                                 if (backingMap.cmp(object,  startKey, lastKeyNode.keys[lastKeyIndex-1]) <= 0){
                                     return lastKeyNode.keys[lastKeyIndex - 1];
                                 }
@@ -951,7 +949,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> subMap(K startKey, K endKey) {
+        public SortedMap<K, V> subMap(K startKey, K endKey) {
             checkRange(startKey);
             Comparator<? super K> cmp = backingMap.comparator;
             if (cmp == null) {
@@ -985,7 +983,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> tailMap(K startKey) {
+        public SortedMap<K, V> tailMap(K startKey) {
             checkRange(startKey);
             if (hasEnd) {
                 return new SubMap<K, V>(startKey, backingMap, endKey);
@@ -1002,7 +1000,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public int size() {
+        public int size() {
             Node<K, V> from, to;
             int fromIndex, toIndex;
             if (hasStart) {
@@ -1178,7 +1176,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public boolean hasNext(){
+        public boolean hasNext(){
             if (finalNode == node && finalOffset == offset) {
                 node = null;
             }
@@ -1195,7 +1193,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Map.Entry<K, V> next() {
+        public Map.Entry<K, V> next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -1214,7 +1212,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K next() {
+        public K next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -1232,7 +1230,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public V next() {
+        public V next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -1269,7 +1267,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Iterator<K> iterator() {
+        public Iterator<K> iterator() {
             Node<K, V> from;
             int fromIndex;
             if (subMap.hasStart) {
@@ -1301,7 +1299,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
             }
             // no intial nor end key, return a unbounded iterator
             if (to == null) {
-                return new UnboundedKeyIterator(subMap.backingMap, from,fromIndex);
+                return new UnboundedKeyIterator<K, V>(subMap.backingMap, from,fromIndex);
             } else
             return new BoundedKeyIterator<K, V>(from, from == null ? 0
                     : fromIndex, subMap.backingMap, to,
@@ -1328,7 +1326,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Iterator<Map.Entry<K, V>> iterator() {
+        public Iterator<Map.Entry<K, V>> iterator() {
             Node<K, V> from;
             int fromIndex;
             if (subMap.hasStart) {
@@ -1359,7 +1357,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
                 toIndex = to != null ? to.left_idx : 0;
             }
             if (to == null) {
-                return new UnboundedEntryIterator(subMap.backingMap, from,fromIndex);
+                return new UnboundedEntryIterator<K, V>(subMap.backingMap, from,fromIndex);
             } else
             return new BoundedEntryIterator<K, V>(from, from == null ? 0
                     : fromIndex, subMap.backingMap, to,
@@ -1451,7 +1449,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         @Override
         public int size() {
             int size = 0;
-            Iterator it = new AscendingSubMapEntryIterator<K, V>(map);
+            Iterator<Map.Entry<K, V>> it = new AscendingSubMapEntryIterator<K, V>(map);
             while (it.hasNext()){
                 it.next();
                 size ++;
@@ -1460,7 +1458,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> ceiling(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> ceiling(java.util.Map.Entry<K, V> e) {
             Map.Entry<K, V> entry = map.ceilingEntry(e.getKey());
             if (entry != null && map.isInRange(entry.getKey())){
                 return entry;
@@ -1470,17 +1468,17 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Iterator<java.util.Map.Entry<K, V>> descendingIterator() {
+        public Iterator<java.util.Map.Entry<K, V>> descendingIterator() {
             return new DescendingSubMapEntrySet<K, V>(map.descendingSubMap()).iterator();
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> descendingSet() {
+        public NavigableSet<java.util.Map.Entry<K, V>> descendingSet() {
             return new DescendingSubMapEntrySet<K, V>(map.descendingSubMap());
         }
 
         @Override
-		public java.util.Map.Entry<K, V> floor(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> floor(java.util.Map.Entry<K, V> e) {
             Map.Entry<K, V> entry = map.floorEntry(e.getKey());
             if (entry!= null && map.isInRange(entry.getKey())){
                 return entry;
@@ -1490,7 +1488,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> headSet(
+        public NavigableSet<java.util.Map.Entry<K, V>> headSet(
                 java.util.Map.Entry<K, V> end, boolean endInclusive) {
             boolean isInRange = true;
             int result;
@@ -1516,7 +1514,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> higher(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> higher(java.util.Map.Entry<K, V> e) {
             Comparator<? super K> cmp = map.m.comparator;
             if (cmp == null) {
                 Comparable<K> object = toComparable(e.getKey());
@@ -1538,7 +1536,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> lower(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> lower(java.util.Map.Entry<K, V> e) {
             Comparator<? super K> cmp = map.m.comparator;
             if (cmp == null) {
                 Comparable<K> object = toComparable(e.getKey());
@@ -1560,7 +1558,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> pollFirst() {
+        public java.util.Map.Entry<K, V> pollFirst() {
             Map.Entry<K, V> ret = map.firstEntry();
             if (ret == null){
                 return null;
@@ -1570,7 +1568,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> pollLast() {
+        public java.util.Map.Entry<K, V> pollLast() {
             Map.Entry<K, V> ret = map.lastEntry();
             if (ret == null){
                 return null;
@@ -1580,7 +1578,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> subSet(java.util.Map.Entry<K, V> start, boolean startInclusive, java.util.Map.Entry<K, V> end, boolean endInclusive) {
+        public NavigableSet<java.util.Map.Entry<K, V>> subSet(java.util.Map.Entry<K, V> start, boolean startInclusive, java.util.Map.Entry<K, V> end, boolean endInclusive) {
             if (map.m.keyCompare(start.getKey(), end.getKey()) > 0) {
                 throw new IllegalArgumentException();
             }
@@ -1598,7 +1596,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start, boolean startInclusive) {
+        public NavigableSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start, boolean startInclusive) {
             boolean isInRange = true;
             int result;
             if (map.toEnd) {
@@ -1623,12 +1621,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Comparator comparator() {
+        public Comparator comparator() {
             return map.m.comparator;
         }
 
         @Override
-		public java.util.Map.Entry<K, V> first() {
+        public java.util.Map.Entry<K, V> first() {
             if (hasStart){
                 if (startInclusive){
                     return startEntry;
@@ -1644,12 +1642,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> headSet(java.util.Map.Entry<K, V> end) {
+        public SortedSet<java.util.Map.Entry<K, V>> headSet(java.util.Map.Entry<K, V> end) {
             return headSet(end, false);
         }
 
         @Override
-		public java.util.Map.Entry<K, V> last() {
+        public java.util.Map.Entry<K, V> last() {
             if (hasEnd){
                 if (endInclusive){
                     return lastentry;
@@ -1665,7 +1663,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> subSet(java.util.Map.Entry<K, V> start, java.util.Map.Entry<K, V> end) {
+        public SortedSet<java.util.Map.Entry<K, V>> subSet(java.util.Map.Entry<K, V> start, java.util.Map.Entry<K, V> end) {
             if ((null != comparator()) ? comparator().compare(start.getKey(), end.getKey()) > 0
                     : toComparable(start.getKey()).compareTo(end.getKey()) > 0) {
                 throw new IllegalArgumentException();
@@ -1680,7 +1678,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start) {
+        public SortedSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start) {
             return tailSet(start, false);
         }
     }
@@ -1701,7 +1699,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         @Override
         public int size() {
             int size = 0;
-            Iterator it = new DescendingSubMapEntryIterator<K, V>(map);
+            Iterator<Map.Entry<K, V>> it = new DescendingSubMapEntryIterator<K, V>(map);
             while (it.hasNext()){
                 it.next();
                 size ++;
@@ -1710,7 +1708,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> ceiling(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> ceiling(java.util.Map.Entry<K, V> e) {
             Entry<K,V> node =  map.m.findFloorEntry(e.getKey());
             if (!map.checkUpperBound(node.key)){
                 node = map.findEndNode();
@@ -1730,12 +1728,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Iterator<java.util.Map.Entry<K, V>> descendingIterator() {
+        public Iterator<java.util.Map.Entry<K, V>> descendingIterator() {
             return descendingSet().iterator();
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> descendingSet() {
+        public NavigableSet<java.util.Map.Entry<K, V>> descendingSet() {
             if (map.fromStart && map.toEnd) {
                 return new AscendingSubMapEntrySet<K, V>(
                         new AscendingSubMap<K, V>(map.hi, map.hiInclusive,
@@ -1756,7 +1754,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> floor(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> floor(java.util.Map.Entry<K, V> e) {
             Entry<K,V> node =  map.m.findCeilingEntry(e.getKey());
             if (!map.checkUpperBound(node.key)){
                 node = map.findEndNode();
@@ -1797,7 +1795,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> headSet(
+        public NavigableSet<java.util.Map.Entry<K, V>> headSet(
                 java.util.Map.Entry<K, V> end, boolean endInclusive) {
             boolean outRange = true;
             int result = 0;
@@ -1830,7 +1828,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> higher(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> higher(java.util.Map.Entry<K, V> e) {
             Entry<K,V> node =  map.m.findLowerEntry(e.getKey());
             if (node != null && !map.checkUpperBound(node.key)){
                 node =  map.hiInclusive? map.findFloorEntryImpl(map.hi):map.findLowerEntryImpl(map.hi);
@@ -1852,7 +1850,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> lower(java.util.Map.Entry<K, V> e) {
+        public java.util.Map.Entry<K, V> lower(java.util.Map.Entry<K, V> e) {
             Entry<K,V> node =  map.m.findHigherEntry(e.getKey());
             if (node != null && !map.checkUpperBound(node.key)){
                 node =  map.loInclusive? map.findCeilingEntryImpl(map.hi):map.findHigherEntryImpl(map.hi);
@@ -1874,7 +1872,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> pollFirst() {
+        public java.util.Map.Entry<K, V> pollFirst() {
             Map.Entry<K, V> ret = map.lastEntry();
             if (ret == null){
                 return null;
@@ -1884,7 +1882,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public java.util.Map.Entry<K, V> pollLast() {
+        public java.util.Map.Entry<K, V> pollLast() {
             Map.Entry<K, V> ret = map.firstEntry();
             if (ret == null){
                 return null;
@@ -1894,7 +1892,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> subSet(
+        public NavigableSet<java.util.Map.Entry<K, V>> subSet(
                 java.util.Map.Entry<K, V> start, boolean startInclusive,
                 java.util.Map.Entry<K, V> end, boolean endInclusive) {
             Comparable<K> startobject = map.comparator() == null ? toComparable(start
@@ -1922,7 +1920,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<java.util.Map.Entry<K, V>> tailSet(
+        public NavigableSet<java.util.Map.Entry<K, V>> tailSet(
                 java.util.Map.Entry<K, V> start, boolean startInclusive) {
             if (map.toEnd) {
                 return new DescendingSubMapEntrySet<K, V>(
@@ -1936,12 +1934,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Comparator comparator() {
+        public Comparator comparator() {
             return map.comparator();
         }
 
         @Override
-		public java.util.Map.Entry<K, V> first() {
+        public java.util.Map.Entry<K, V> first() {
             java.util.Map.Entry<K, V> ret = map.lastEntry();
             if (ret == null){
                 throw new NoSuchElementException();
@@ -1950,12 +1948,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> headSet(java.util.Map.Entry<K, V> end) {
+        public SortedSet<java.util.Map.Entry<K, V>> headSet(java.util.Map.Entry<K, V> end) {
             return headSet(end,false);
         }
 
         @Override
-		public java.util.Map.Entry<K, V> last() {
+        public java.util.Map.Entry<K, V> last() {
             java.util.Map.Entry<K, V> ret = map.firstEntry();
             if (ret == null){
                 throw new NoSuchElementException();
@@ -1964,7 +1962,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> subSet(
+        public SortedSet<java.util.Map.Entry<K, V>> subSet(
                 java.util.Map.Entry<K, V> start, java.util.Map.Entry<K, V> end) {
                 return subSet(start, true, end, false);
         }
@@ -1975,7 +1973,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start) {
+        public SortedSet<java.util.Map.Entry<K, V>> tailSet(java.util.Map.Entry<K, V> start) {
             return tailSet(start, true);
         }
     }
@@ -1993,14 +1991,14 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final Iterator<K> descendingIterator() {
+        public final Iterator<K> descendingIterator() {
             return new DescendingSubMapKeyIterator<K, V>(map.descendingSubMap());
         }
 
         @Override
         public int size() {
             int size = 0;
-            Iterator it = new AscendingSubMapEntryIterator<K, V>(map);
+            Iterator<Map.Entry<K, V>> it = new AscendingSubMapEntryIterator<K, V>(map);
             while (it.hasNext()){
                 it.next();
                 size ++;
@@ -2009,7 +2007,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K ceiling(K e) {
+        public K ceiling(K e) {
             Entry<K,V> ret = map.findFloorEntry(e);
             if (ret != null && map.isInRange(ret.key)){
                 return ret.key;
@@ -2019,12 +2017,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> descendingSet() {
+        public NavigableSet<K> descendingSet() {
             return new DescendingSubMapKeySet<K, V>(map.descendingSubMap());
         }
 
         @Override
-		public K floor(K e) {
+        public K floor(K e) {
             Entry<K,V> ret = map.findFloorEntry(e);
             if (ret != null && map.isInRange(ret.key)){
                 return ret.key;
@@ -2034,7 +2032,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> headSet(K end, boolean endInclusive) {
+        public NavigableSet<K> headSet(K end, boolean endInclusive) {
             boolean isInRange = true;
                 int result;
             if (map.toEnd) {
@@ -2064,7 +2062,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K higher(K e) {
+        public K higher(K e) {
             K ret = map.m.higherKey(e);
             if (ret != null && map.isInRange(ret)){
                 return ret;
@@ -2074,7 +2072,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K lower(K e) {
+        public K lower(K e) {
             K ret =map.m.lowerKey(e);
             if (ret != null && map.isInRange(ret)){
                 return ret;
@@ -2084,7 +2082,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K pollFirst() {
+        public K pollFirst() {
             Map.Entry<K, V> ret = map.firstEntry();
             if (ret == null){
                 return null;
@@ -2094,7 +2092,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K pollLast() {
+        public K pollLast() {
             Map.Entry<K, V> ret = map.lastEntry();
             if (ret == null){
                 return null;
@@ -2104,7 +2102,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> subSet(K start, boolean startInclusive, K end, boolean endInclusive) {
+        public NavigableSet<K> subSet(K start, boolean startInclusive, K end, boolean endInclusive) {
             if (map.fromStart
                     && ((!map.loInclusive && startInclusive) ? map.m.keyCompare(start,
                             map.lo) <= 0 : map.m.keyCompare(start, map.lo) < 0)
@@ -2121,7 +2119,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> tailSet(K start, boolean startInclusive) {
+        public NavigableSet<K> tailSet(K start, boolean startInclusive) {
             boolean isInRange = true;
             int result;
             if (map.toEnd) {
@@ -2153,32 +2151,32 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Comparator<? super K> comparator() {
+        public Comparator<? super K> comparator() {
             return map.m.comparator;
         }
 
         @Override
-		public K first() {
+        public K first() {
             return map.firstKey();
         }
 
         @Override
-		public SortedSet<K> headSet(K end) {
+        public SortedSet<K> headSet(K end) {
             return headSet(end, false);
         }
 
         @Override
-		public K last() {
+        public K last() {
             return map.lastKey();
         }
 
         @Override
-		public SortedSet<K> subSet(K start, K end) {
+        public SortedSet<K> subSet(K start, K end) {
             return subSet(start,true, end,false);
         }
 
         @Override
-		public SortedSet<K> tailSet(K start) {
+        public SortedSet<K> tailSet(K start) {
             return tailSet(start,true);
         }
 
@@ -2206,7 +2204,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public final Iterator<K> descendingIterator() {
+        public final Iterator<K> descendingIterator() {
             if (map.fromStart && map.toEnd) {
                 return new AscendingSubMapKeyIterator<K, V>(
                         new AscendingSubMap<K, V>(map.hi, map.hiInclusive,
@@ -2229,7 +2227,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         @Override
         public int size() {
             int size = 0;
-            Iterator it = new DescendingSubMapEntryIterator<K, V>(map);
+            Iterator<Map.Entry<K, V>> it = new DescendingSubMapEntryIterator<K, V>(map);
             while (it.hasNext()){
                 it.next();
                 size ++;
@@ -2238,7 +2236,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> descendingSet() {
+        public NavigableSet<K> descendingSet() {
             if (map.fromStart && map.toEnd) {
                 return new AscendingSubMapKeySet<K, V>(
                         new AscendingSubMap<K, V>(map.hi, map.hiInclusive,
@@ -2259,7 +2257,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K ceiling(K e) {
+        public K ceiling(K e) {
             Comparable<K> object = map.comparator() == null ? toComparable(e)
                     : null;
             Entry<K,V> node =  map.m.findFloorEntry(e);
@@ -2279,7 +2277,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K floor(K e) {
+        public K floor(K e) {
             Entry<K,V> node =  map.m.findCeilingEntry(e);
             if (node!= null && !map.checkUpperBound(node.key)){
                 node = map.hiInclusive?map.m.findCeilingEntry(map.hi):map.m.findHigherEntry(map.hi);
@@ -2299,7 +2297,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> headSet(K end, boolean endInclusive) {
+        public NavigableSet<K> headSet(K end, boolean endInclusive) {
             checkInRange(end,endInclusive);
             if (map.fromStart) {
                 return new DescendingSubMapKeySet<K, V>(
@@ -2312,7 +2310,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K higher(K e) {
+        public K higher(K e) {
             Comparable<K> object = map.comparator() == null ? toComparable(e)
                     : null;
             Entry<K,V> node =  map.m.findLowerEntry(e);
@@ -2332,7 +2330,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K lower(K e) {
+        public K lower(K e) {
             Entry<K,V> node =  map.m.findHigherEntry(e);
             if (node != null && !map.checkUpperBound(node.key)){
                 node = map.hiInclusive ? map.m.findCeilingEntry(map.hi) : map.m.findHigherEntry(map.hi);
@@ -2352,7 +2350,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K pollFirst() {
+        public K pollFirst() {
             Map.Entry<K, V> ret = map.firstEntry();
             if (ret == null){
                 return null;
@@ -2362,7 +2360,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K pollLast() {
+        public K pollLast() {
             Map.Entry<K, V> ret = map.lastEntry();
             if (ret == null){
                 return null;
@@ -2372,7 +2370,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> subSet(K start, boolean startInclusive, K end, boolean endInclusive) {
+        public NavigableSet<K> subSet(K start, boolean startInclusive, K end, boolean endInclusive) {
             checkInRange(start,startInclusive);
             checkInRange(end,endInclusive);
             if ((null != map.comparator()) ? map.comparator().compare(
@@ -2384,7 +2382,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> tailSet(K start, boolean startInclusive) {
+        public NavigableSet<K> tailSet(K start, boolean startInclusive) {
             checkInRange(start,startInclusive);
             if (map.toEnd) {
                 return new DescendingSubMapKeySet<K, V>(
@@ -2418,32 +2416,32 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Comparator<? super K> comparator() {
+        public Comparator<? super K> comparator() {
             return map.comparator();
         }
 
         @Override
-		public K first() {
+        public K first() {
             return map.firstKey();
         }
 
         @Override
-		public SortedSet<K> headSet(K end) {
+        public SortedSet<K> headSet(K end) {
             return headSet(end, false);
         }
 
         @Override
-		public K last() {
+        public K last() {
             return map.lastKey();
         }
 
         @Override
-		public SortedSet<K> subSet(K start, K end) {
+        public SortedSet<K> subSet(K start, K end) {
             return subSet(start,true, end,false);
         }
 
         @Override
-		public SortedSet<K> tailSet(K start) {
+        public SortedSet<K> tailSet(K start) {
             return tailSet(start,true);
         }
     }
@@ -2502,7 +2500,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
             loInclusive = hiInclusive = false;
         }
 
-        Node findNode(K key){
+        Node<K, V> findNode(K key){
             return m.findNode(key);
         }
 
@@ -2511,7 +2509,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
          */
 
         @Override
-		public Comparator<? super K> comparator() {
+        public Comparator<? super K> comparator() {
             return m.comparator();
         }
 
@@ -2579,33 +2577,33 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
          */
 
         @Override
-		public abstract Map.Entry<K, V> firstEntry();
+        public abstract Map.Entry<K, V> firstEntry();
 
         @Override
-		public abstract Map.Entry<K, V> lastEntry();
+        public abstract Map.Entry<K, V> lastEntry();
 
         @Override
-		public abstract Map.Entry<K, V> pollFirstEntry();
+        public abstract Map.Entry<K, V> pollFirstEntry();
 
         @Override
-		public abstract Map.Entry<K, V> pollLastEntry();
+        public abstract Map.Entry<K, V> pollLastEntry();
 
         @Override
-		public abstract Map.Entry<K, V> higherEntry(K key);
+        public abstract Map.Entry<K, V> higherEntry(K key);
 
         @Override
-		public abstract Map.Entry<K, V> lowerEntry(K key);
+        public abstract Map.Entry<K, V> lowerEntry(K key);
 
         @Override
-		public abstract Map.Entry<K, V> ceilingEntry(K key);
+        public abstract Map.Entry<K, V> ceilingEntry(K key);
 
         @Override
-		public abstract Map.Entry<K, V> floorEntry(K key);
+        public abstract Map.Entry<K, V> floorEntry(K key);
 
         abstract NavigableSubMap<K, V>descendingSubMap();
 
         @Override
-		public K firstKey() {
+        public K firstKey() {
             Map.Entry<K, V> node = firstEntry();
             if (node != null) {
                 return node.getKey();
@@ -2614,7 +2612,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K lastKey() {
+        public K lastKey() {
             Map.Entry<K, V> node = lastEntry();
             if (node != null) {
                 return node.getKey();
@@ -2623,25 +2621,25 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K higherKey(K key) {
+        public K higherKey(K key) {
             Map.Entry<K, V> entry = higherEntry(key);
             return (null == entry) ? null : entry.getKey();
         }
 
         @Override
-		public K lowerKey(K key) {
+        public K lowerKey(K key) {
             Map.Entry<K, V> entry = lowerEntry(key);
             return (null == entry) ? null : entry.getKey();
         }
 
         @Override
-		public K ceilingKey(K key) {
+        public K ceilingKey(K key) {
             Map.Entry<K, V> entry = ceilingEntry(key);
             return (null == entry) ? null : entry.getKey();
         }
 
         @Override
-		public K floorKey(K key) {
+        public K floorKey(K key) {
             Map.Entry<K, V> entry = floorEntry(key);
             return (null == entry) ? null : entry.getKey();
         }
@@ -2651,7 +2649,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
          */
 
         @Override
-		public abstract NavigableSet<K> navigableKeySet();
+        public abstract NavigableSet<K> navigableKeySet();
 
         @Override
         public abstract Set<Map.Entry<K, V>> entrySet();
@@ -2662,12 +2660,12 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public NavigableSet<K> descendingKeySet() {
+        public NavigableSet<K> descendingKeySet() {
             return descendingMap().navigableKeySet();
         }
 
         @Override
-		public SortedMap<K, V> subMap(K start, K end) {
+        public SortedMap<K, V> subMap(K start, K end) {
             // the exception check is special here, the end should not if equal
             // to endkey unless start is equal to end
             if (!checkLowerBound(start) || !checkUpperBound(start)){
@@ -2690,7 +2688,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> headMap(K end) {
+        public SortedMap<K, V> headMap(K end) {
             if (toEnd) {
                 int result = (null != comparator()) ? comparator().compare(end, hi)
                         : toComparable(end).compareTo(hi);
@@ -2709,7 +2707,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> tailMap(K start) {
+        public SortedMap<K, V> tailMap(K start) {
             if (fromStart) {
                 int result = -((null != comparator()) ? comparator().compare(
                         lo, start) : toComparable(lo).compareTo(start));
@@ -2728,14 +2726,14 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public abstract NavigableMap<K, V> subMap(K start,
+        public abstract NavigableMap<K, V> subMap(K start,
                 boolean startKeyInclusive, K end, boolean endKeyInclusive);
 
         @Override
-		public abstract NavigableMap<K, V> headMap(K end, boolean inclusive);
+        public abstract NavigableMap<K, V> headMap(K end, boolean inclusive);
 
         @Override
-		public abstract NavigableMap<K, V> tailMap(K start, boolean inclusive);
+        public abstract NavigableMap<K, V> tailMap(K start, boolean inclusive);
 
         /**
          *
@@ -3194,7 +3192,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Collection<V> values() {
+        public Collection<V> values() {
             if(valuesCollection==null) {
                 if (!this.toEnd && !this.fromStart){
                     valuesCollection = super.values();
@@ -3248,17 +3246,17 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
             return new Iterator<V>(){
 
                 @Override
-				public boolean hasNext() {
+                public boolean hasNext() {
                     return false;
                 }
 
                 @Override
-				public V next() {
+                public V next() {
                     throw new NoSuchElementException();
                 }
 
                 @Override
-				public void remove() {
+                public void remove() {
                     throw new IllegalStateException();
                 }
             };
@@ -3379,14 +3377,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
             return new AscendingSubMapEntrySet<K, V>(this);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public NavigableSet<K> navigableKeySet() {
-            return new AscendingSubMapKeySet(this);
+            return new AscendingSubMapKeySet<K, V>(this);
         }
 
         @Override
-		public NavigableMap<K, V> descendingMap() {
+        public NavigableMap<K, V> descendingMap() {
             if (fromStart && toEnd) {
                 return new DescendingSubMap<K, V>( hi, hiInclusive,
                         m,lo, loInclusive);
@@ -3401,7 +3398,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		NavigableSubMap<K, V> descendingSubMap() {
+        NavigableSubMap<K, V> descendingSubMap() {
             if (fromStart && toEnd) {
                 return new DescendingSubMap<K, V>( hi, hiInclusive,
                         m,lo, loInclusive);
@@ -3501,7 +3498,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public SortedMap<K, V> subMap(K start, K end) {
+        public SortedMap<K, V> subMap(K start, K end) {
             // the exception check is special here, the end should not if equal
             // to endkey unless start is equal to end
             if (!checkLowerBound(start) || !checkUpperBound(start)){
@@ -3659,14 +3656,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
             return new DescendingSubMapEntrySet<K, V>(this);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public NavigableSet<K> navigableKeySet() {
-            return new DescendingSubMapKeySet(this);
+            return new DescendingSubMapKeySet<K, V>(this);
         }
 
         @Override
-		public NavigableMap<K, V> descendingMap() {
+        public NavigableMap<K, V> descendingMap() {
             if (fromStart && toEnd) {
                 return new AscendingSubMap<K, V>( hi, hiInclusive,
                         m,lo, loInclusive);
@@ -3773,7 +3769,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Collection<V> values() {
+        public Collection<V> values() {
             if(valuesCollection==null) {
                 if (fromStart || toEnd){
                     return valuesCollection = new DescendingSubMapValuesCollection<K, V>(this);
@@ -3814,7 +3810,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public V next() {
+        public V next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -3988,7 +3984,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @return the comparator or {@code null} if the natural ordering is used.
      */
     @Override
-	public Comparator<? super K> comparator() {
+    public Comparator<? super K> comparator() {
         return comparator;
     }
 
@@ -4086,23 +4082,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
                     }
                 }
                 node = node.next;
-            }
-        }
-        return false;
-    }
-
-    private boolean containsValue(Entry<K, V> node, Object value) {
-        if (value == null ? node.value == null : value.equals(node.value)) {
-            return true;
-        }
-        if (node.left != null) {
-            if (containsValue(node.left, value)) {
-                return true;
-            }
-        }
-        if (node.right != null) {
-            if (containsValue(node.right, value)) {
-                return true;
             }
         }
         return false;
@@ -4431,7 +4410,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      *                if this map is empty.
      */
     @Override
-	public K firstKey() {
+    public K firstKey() {
         if (root != null) {
             Node<K, V> node = minimum(root);
             return node.keys[node.left_idx];
@@ -4440,32 +4419,32 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
     }
 
     Node<K, V> findNode(K key) {
-		Comparable<K> object = comparator == null ? toComparable(key)
-				: null;
-		K keyK = key;
-		Node<K, V> node = root;
-		while (node != null) {
-			K[] keys = node.keys;
-			int left_idx = node.left_idx;
-			int result = cmp(object, keyK, keys[left_idx]);
-			if (result < 0) {
-				node = node.left;
-			} else if (result == 0) {
-				return node;
-			} else {
-				int right_idx = node.right_idx;
-				if (left_idx != right_idx) {
-					result = cmp(object, keyK, keys[right_idx]);
-				}
-				if (result > 0) {
-					node = node.right;
-				} else {
-					return node;
-				}
-			}
-		}
-		return null;
-	}
+        Comparable<K> object = comparator == null ? toComparable(key)
+                : null;
+        K keyK = key;
+        Node<K, V> node = root;
+        while (node != null) {
+            K[] keys = node.keys;
+            int left_idx = node.left_idx;
+            int result = cmp(object, keyK, keys[left_idx]);
+            if (result < 0) {
+                node = node.left;
+            } else if (result == 0) {
+                return node;
+            } else {
+                int right_idx = node.right_idx;
+                if (left_idx != right_idx) {
+                    result = cmp(object, keyK, keys[right_idx]);
+                }
+                if (result > 0) {
+                    node = node.right;
+                } else {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Returns the value of the mapping with the specified key.
@@ -4566,7 +4545,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      *             if this map is empty.
      */
     @Override
-	public K lastKey() {
+    public K lastKey() {
         if (root != null) {
             Node<K, V> node = maximum(root);
             return node.keys[node.right_idx];
@@ -5482,7 +5461,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> firstEntry() {
+    public Map.Entry<K, V> firstEntry() {
         return newImmutableEntry(findSmallestEntry());
     }
 
@@ -5493,7 +5472,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> lastEntry() {
+    public Map.Entry<K, V> lastEntry() {
         return newImmutableEntry(findBiggestEntry());
     }
 
@@ -5504,7 +5483,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> pollFirstEntry() {
+    public Map.Entry<K, V> pollFirstEntry() {
         Entry<K, V> node = findSmallestEntry();
         SimpleImmutableEntry<K, V> result = newImmutableEntry(node);
         if (null != node) {
@@ -5520,7 +5499,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> pollLastEntry() {
+    public Map.Entry<K, V> pollLastEntry() {
         Entry<K, V> node = findBiggestEntry();
         SimpleImmutableEntry<K, V> result = newImmutableEntry(node);
         if (null != node) {
@@ -5536,7 +5515,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> higherEntry(K key) {
+    public Map.Entry<K, V> higherEntry(K key) {
         return newImmutableEntry(findHigherEntry(key));
     }
 
@@ -5547,7 +5526,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public K higherKey(K key) {
+    public K higherKey(K key) {
         Map.Entry<K, V> entry = higherEntry(key);
         return (null == entry) ? null : entry.getKey();
     }
@@ -5559,7 +5538,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> lowerEntry(K key) {
+    public Map.Entry<K, V> lowerEntry(K key) {
         return newImmutableEntry(findLowerEntry(key));
     }
 
@@ -5570,7 +5549,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public K lowerKey(K key) {
+    public K lowerKey(K key) {
         Map.Entry<K, V> entry = lowerEntry(key);
         return (null == entry) ? null : entry.getKey();
     }
@@ -5582,7 +5561,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> ceilingEntry(K key) {
+    public Map.Entry<K, V> ceilingEntry(K key) {
         return newImmutableEntry(findCeilingEntry(key));
     }
 
@@ -5593,7 +5572,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public K ceilingKey(K key) {
+    public K ceilingKey(K key) {
         Map.Entry<K, V> entry = ceilingEntry(key);
         return (null == entry) ? null : entry.getKey();
     }
@@ -5605,7 +5584,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public Map.Entry<K, V> floorEntry(K key) {
+    public Map.Entry<K, V> floorEntry(K key) {
         return newImmutableEntry(findFloorEntry(key));
     }
 
@@ -5616,7 +5595,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public K floorKey(K key) {
+    public K floorKey(K key) {
         Map.Entry<K, V> entry = floorEntry(key);
         return (null == entry) ? null : entry.getKey();
     }
@@ -5709,7 +5688,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	@SuppressWarnings("unchecked")
     public NavigableSet<K> navigableKeySet() {
         return (null != navigableKeySet) ? navigableKeySet
                 : (navigableKeySet = (new AscendingSubMap<K, V>(this))
@@ -5723,7 +5701,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public NavigableSet<K> descendingKeySet() {
+    public NavigableSet<K> descendingKeySet() {
         return descendingMap().navigableKeySet();
     }
 
@@ -5734,7 +5712,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public NavigableMap<K, V> descendingMap() {
+    public NavigableMap<K, V> descendingMap() {
         return (null != descendingMap) ? descendingMap
                 : (descendingMap = new DescendingSubMap<K, V>(this));
     }
@@ -5746,7 +5724,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public NavigableMap<K, V> subMap(K start, boolean startInclusive, K end,
+    public NavigableMap<K, V> subMap(K start, boolean startInclusive, K end,
             boolean endInclusive) {
         if (keyCompare(start, end) <= 0) {
             return new AscendingSubMap<K, V>(start, startInclusive, this, end,
@@ -5762,7 +5740,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public NavigableMap<K, V> headMap(K end, boolean inclusive) {
+    public NavigableMap<K, V> headMap(K end, boolean inclusive) {
         // check for error
         keyCompare(end, end);
         return new AscendingSubMap<K, V>(this, end, inclusive);
@@ -5775,7 +5753,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      * @since 1.6
      */
     @Override
-	public NavigableMap<K, V> tailMap(K start, boolean inclusive) {
+    public NavigableMap<K, V> tailMap(K start, boolean inclusive) {
         // check for error
         keyCompare(start, start);
         return new AscendingSubMap<K, V>(start, inclusive, this);
@@ -5807,7 +5785,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      *             the specified range is outside of its range.
      */
     @Override
-	public SortedMap<K, V> subMap(K startKey, K endKey) {
+    public SortedMap<K, V> subMap(K startKey, K endKey) {
         if (comparator == null) {
             if (toComparable(startKey).compareTo(endKey) <= 0) {
                 return new SubMap<K, V>(startKey, this, endKey);
@@ -5842,7 +5820,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      *             map and the specified key is outside of its range.
      */
     @Override
-	public SortedMap<K, V> headMap(K endKey) {
+    public SortedMap<K, V> headMap(K endKey) {
         return headMap(endKey, false);
     }
 
@@ -5869,7 +5847,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
      *             and the specified key is outside of its range.
      */
     @Override
-	public SortedMap<K, V> tailMap(K startKey) {
+    public SortedMap<K, V> tailMap(K startKey) {
         return tailMap(startKey, true);
     }
 
@@ -6006,7 +5984,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
 
         // overwrite
         @Override
-		public V setValue(V object) {
+        public V setValue(V object) {
             V result = value;
             value = object;
             // set back to TreeMap
@@ -6028,7 +6006,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public Map.Entry<K, V> next() {
+        public Map.Entry<K, V> next() {
             makeNext();
             int idx = lastOffset;
             return new TreeMapEntry<K, V>(lastNode.keys[idx], lastNode.values[idx], lastNode, idx);
@@ -6048,7 +6026,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public K next() {
+        public K next() {
             makeNext();
             return lastNode.keys[lastOffset];
         }
@@ -6067,7 +6045,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements
         }
 
         @Override
-		public V next() {
+        public V next() {
             makeNext();
             return lastNode.values[lastOffset];
         }
