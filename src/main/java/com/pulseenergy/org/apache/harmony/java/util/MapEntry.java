@@ -27,10 +27,6 @@ class MapEntry<K, V> implements Map.Entry<K, V>, Cloneable {
     K key;
     V value;
 
-    interface Type<RT, KT, VT> {
-        RT get(MapEntry<KT, VT> entry);
-    }
-
     MapEntry(K theKey) {
         key = theKey;
     }

@@ -125,34 +125,8 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		int index;
 
-		public void setLocation(Node<K, V> node, int index, V value, K key) {
-			this.node = node;
-			this.index = index;
-			this.value = value;
-			this.key = key;
-		}
-
-		boolean color;
-
-		Entry(K theKey) {
-			super(theKey);
-		}
-
 		Entry(K theKey, V theValue) {
 			super(theKey, theValue);
-		}
-
-		@SuppressWarnings("unchecked")
-		Entry<K, V> clone(Entry<K, V> theParent) {
-			Entry<K, V> clone = (Entry<K, V>) super.clone();
-			clone.parent = theParent;
-			if (left != null) {
-				clone.left = left.clone(clone);
-			}
-			if (right != null) {
-				clone.right = right.clone(clone);
-			}
-			return clone;
 		}
 
 		@Override
@@ -256,13 +230,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
-		}
-
-		Entry<K, V> createEntry(Node<K, V> node, int index) {
-			TreeMap.Entry<K, V> entry = new TreeMap.Entry<K, V>(node.keys[index], node.values[index]);
-			entry.node = node;
-			entry.index = index;
-			return entry;
 		}
 
 		abstract TreeMap.Entry<K, V> getStartNode();
@@ -558,14 +525,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					}
 				}
 			}
-		}
-
-		BoundedMapIterator(Node<K, V> startNode, TreeMap<K, V> map, Node<K, V> finalNode, int finalOffset) {
-			this(startNode, startNode.left_idx, map, finalNode, finalOffset);
-		}
-
-		BoundedMapIterator(Node<K, V> startNode, int startOffset, TreeMap<K, V> map, Node<K, V> finalNode) {
-			this(startNode, startOffset, map, finalNode, finalNode.right_idx);
 		}
 
 		void makeBoundedNext() {
@@ -1994,13 +1953,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			return null;
 		}
 
-		TreeMap.Entry<K, V> createEntry(Node<K, V> node, int index) {
-			TreeMap.Entry<K, V> entry = new TreeMap.Entry<K, V>(node.keys[index], node.values[index]);
-			entry.node = node;
-			entry.index = index;
-			return entry;
-		}
-
 		final TreeMap.Entry<K, V> biggerOrEqualEntry(K key) {
 			TreeMap.Entry<K, V> result = findCeilingEntry(key);
 			return (null != result && (!toEnd || checkUpperBound(result.getKey()))) ? result : null;
@@ -2307,7 +2259,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> firstEntry() {
 			TreeMap.Entry<K, V> ret = theSmallestEntry();
 			if (ret != null) {
-				return m.newImmutableEntry(ret);
+				return newImmutableEntry(ret);
 			} else {
 				return null;
 			}
@@ -2317,7 +2269,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> lastEntry() {
 			TreeMap.Entry<K, V> ret = theBiggestEntry();
 			if (ret != null) {
-				return m.newImmutableEntry(ret);
+				return newImmutableEntry(ret);
 			} else {
 				return null;
 			}
@@ -2326,7 +2278,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> pollFirstEntry() {
 			TreeMap.Entry<K, V> node = theSmallestEntry();
-			SimpleImmutableEntry<K, V> result = m.newImmutableEntry(node);
+			Map.Entry<K, V> result = newImmutableEntry(node);
 			if (null != node) {
 				m.remove(node.key);
 			}
@@ -2336,7 +2288,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> pollLastEntry() {
 			TreeMap.Entry<K, V> node = theBiggestEntry();
-			SimpleImmutableEntry<K, V> result = m.newImmutableEntry(node);
+			Map.Entry<K, V> result = newImmutableEntry(node);
 			if (null != node) {
 				m.remove(node.key);
 			}
@@ -2347,7 +2299,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> higherEntry(K key) {
 			TreeMap.Entry<K, V> entry = super.findHigherEntry(key);
 			if (null != entry && isInRange(entry.key)) {
-				return m.newImmutableEntry(entry);
+				return newImmutableEntry(entry);
 			} else {
 				return null;
 			}
@@ -2357,7 +2309,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> lowerEntry(K key) {
 			TreeMap.Entry<K, V> entry = super.findLowerEntry(key);
 			if (null != entry && isInRange(entry.key)) {
-				return m.newImmutableEntry(entry);
+				return newImmutableEntry(entry);
 			} else {
 				return null;
 			}
@@ -2367,7 +2319,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> ceilingEntry(K key) {
 			TreeMap.Entry<K, V> entry = super.findCeilingEntry(key);
 			if (null != entry && isInRange(entry.key)) {
-				return m.newImmutableEntry(entry);
+				return newImmutableEntry(entry);
 			} else {
 				return null;
 			}
@@ -2377,7 +2329,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> floorEntry(K key) {
 			TreeMap.Entry<K, V> entry = super.findFloorEntry(key);
 			if (null != entry && isInRange(entry.key)) {
-				return m.newImmutableEntry(entry);
+				return newImmutableEntry(entry);
 			} else {
 				return null;
 			}
@@ -2560,7 +2512,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (result == null || !isInRange(result.key)) {
 				return null;
 			}
-			return m.newImmutableEntry(result);
+			return newImmutableEntry(result);
 		}
 
 		@Override
@@ -2574,7 +2526,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (result != null && !isInRange(result.key)) {
 				return null;
 			}
-			return m.newImmutableEntry(result);
+			return newImmutableEntry(result);
 		}
 
 		@Override
@@ -2591,7 +2543,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (node != null && toEnd && (hiInclusive ? this.m.keyCompare(hi, node.key) > 0 : this.m.keyCompare(hi, node.key) >= 0)) {
 				node = null;
 			}
-			SimpleImmutableEntry<K, V> result = m.newImmutableEntry(node);
+			Map.Entry<K, V> result = newImmutableEntry(node);
 			if (null != node) {
 				m.remove(node.key);
 			}
@@ -2612,7 +2564,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (node != null && toEnd && (hiInclusive ? this.m.keyCompare(hi, node.key) > 0 : this.m.keyCompare(hi, node.key) >= 0)) {
 				node = null;
 			}
-			SimpleImmutableEntry<K, V> result = m.newImmutableEntry(node);
+			Map.Entry<K, V> result = newImmutableEntry(node);
 			if (null != node) {
 				m.remove(node.key);
 			}
@@ -2628,7 +2580,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (null != entry && (!isInRange(entry.getKey()))) {
 				entry = null;
 			}
-			return m.newImmutableEntry(entry);
+			return newImmutableEntry(entry);
 		}
 
 		@Override
@@ -2640,7 +2592,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (null != entry && (!isInRange(entry.getKey()))) {
 				entry = null;
 			}
-			return m.newImmutableEntry(entry);
+			return newImmutableEntry(entry);
 		}
 
 		@Override
@@ -2655,7 +2607,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (null != entry && (toEnd && !checkUpperBound(entry.getKey()))) {
 				entry = null;
 			}
-			return m.newImmutableEntry(entry);
+			return newImmutableEntry(entry);
 		}
 
 		@Override
@@ -2670,7 +2622,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			if (null != entry && (fromStart && !checkLowerBound(entry.getKey()))) {
 				entry = null;
 			}
-			return m.newImmutableEntry(entry);
+			return newImmutableEntry(entry);
 		}
 
 		@Override
@@ -3081,7 +3033,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		return null;
 	}
 
-	Entry<K, V> createEntry(Node<K, V> node, int index) {
+	static <K, V> Entry<K, V> createEntry(Node<K, V> node, int index) {
 		TreeMap.Entry<K, V> entry = new TreeMap.Entry<K, V>(node.keys[index], node.values[index]);
 		entry.node = node;
 		entry.index = index;
@@ -3091,10 +3043,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	TreeMap.Entry<K, V> findSmallestEntry() {
 		if (null != root) {
 			Node<K, V> node = minimum(root);
-			TreeMap.Entry<K, V> ret = new TreeMap.Entry<K, V>(node.keys[node.left_idx], node.values[node.left_idx]);
-			ret.node = node;
-			ret.index = node.left_idx;
-			return ret;
+			return createEntry(node, node.left_idx);
 		}
 		return null;
 	}
@@ -3102,10 +3051,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	TreeMap.Entry<K, V> findBiggestEntry() {
 		if (null != root) {
 			Node<K, V> node = maximum(root);
-			TreeMap.Entry<K, V> ret = new TreeMap.Entry<K, V>(node.keys[node.right_idx], node.values[node.right_idx]);
-			ret.node = node;
-			ret.index = node.right_idx;
-			return ret;
+			return createEntry(node, node.right_idx);
 		}
 		return null;
 	}
@@ -3520,7 +3466,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		return y;
 	}
 
-	static private <K, V> Node<K, V> successor(Node<K, V> x) {
+	static <K, V> Node<K, V> successor(Node<K, V> x) {
 		if (x.right != null) {
 			return minimum(x.right);
 		}
@@ -4412,7 +4358,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	@Override
 	public Map.Entry<K, V> pollFirstEntry() {
 		Entry<K, V> node = findSmallestEntry();
-		SimpleImmutableEntry<K, V> result = newImmutableEntry(node);
+		Map.Entry<K, V> result = newImmutableEntry(node);
 		if (null != node) {
 			remove(node.key);
 		}
@@ -4428,7 +4374,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	@Override
 	public Map.Entry<K, V> pollLastEntry() {
 		Entry<K, V> node = findBiggestEntry();
-		SimpleImmutableEntry<K, V> result = newImmutableEntry(node);
+		Map.Entry<K, V> result = newImmutableEntry(node);
 		if (null != node) {
 			remove(node.key);
 		}
@@ -4527,7 +4473,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		return (null == entry) ? null : entry.getKey();
 	}
 
-	final AbstractMap.SimpleImmutableEntry<K, V> newImmutableEntry(TreeMap.Entry<K, V> entry) {
+	static <K, V> Map.Entry<K, V> newImmutableEntry(TreeMap.Entry<K, V> entry) {
 		return (null == entry) ? null : new SimpleImmutableEntry<K, V>(entry);
 	}
 
