@@ -2860,7 +2860,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public TreeMap<K, V> clone() {
 		try {
 			TreeMap<K, V> clone = (TreeMap<K, V>) super.clone();
 			clone.entrySet = null;
