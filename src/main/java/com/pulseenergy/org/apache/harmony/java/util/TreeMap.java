@@ -560,7 +560,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 			makeBoundedNext();
 			int idx = lastOffset;
-			return new MapEntry<K, V>(lastNode.keys[idx], lastNode.values[idx]);
+			return new TreeMapEntry<K, V>(lastNode.keys[idx], lastNode.values[idx], lastNode, idx);
 		}
 	}
 
