@@ -19,7 +19,7 @@
 * @author Alexey V. Varlamov
 */
 
-package com.pulseenergy.org.apache.harmony.java.util;
+package org.apache.harmony.java.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

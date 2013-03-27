@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.pulseenergy.org.apache.harmony.java.util;
+package org.apache.harmony.java.util;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

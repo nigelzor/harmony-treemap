@@ -1,4 +1,4 @@
-package com.pulseenergy.org.apache.harmony.java.util;
+package org.apache.harmony.java.util;
 
 /*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
