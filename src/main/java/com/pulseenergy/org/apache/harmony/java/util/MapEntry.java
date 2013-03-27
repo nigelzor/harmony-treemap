@@ -24,67 +24,64 @@ import java.util.Map;
  */
 class MapEntry<K, V> implements Map.Entry<K, V>, Cloneable {
 
-    K key;
-    V value;
+	K key;
+	V value;
 
-    MapEntry(K theKey) {
-        key = theKey;
-    }
+	MapEntry(K theKey) {
+		key = theKey;
+	}
 
-    MapEntry(K theKey, V theValue) {
-        key = theKey;
-        value = theValue;
-    }
+	MapEntry(K theKey, V theValue) {
+		key = theKey;
+		value = theValue;
+	}
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object instanceof Map.Entry) {
-            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) object;
-            return (key == null ? entry.getKey() == null : key.equals(entry
-                    .getKey()))
-                    && (value == null ? entry.getValue() == null : value
-                            .equals(entry.getValue()));
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+		if (object instanceof Map.Entry) {
+			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) object;
+			return (key == null ? entry.getKey() == null : key.equals(entry.getKey()))
+					&& (value == null ? entry.getValue() == null : value.equals(entry.getValue()));
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public K getKey() {
-        return key;
-    }
+		return key;
+	}
 
-    @Override
+	@Override
 	public V getValue() {
-        return value;
-    }
+		return value;
+	}
 
-    @Override
-    public int hashCode() {
-        return (key == null ? 0 : key.hashCode())
-                ^ (value == null ? 0 : value.hashCode());
-    }
+	@Override
+	public int hashCode() {
+		return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+	}
 
-    @Override
+	@Override
 	public V setValue(V object) {
-        V result = value;
-        value = object;
-        return result;
-    }
+		V result = value;
+		value = object;
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return key + "=" + value;
-    }
+	@Override
+	public String toString() {
+		return key + "=" + value;
+	}
 }
