@@ -307,6 +307,7 @@ public abstract class SortedMapTestBase extends TestCase {
             } catch (NoSuchElementException e) {
                 caught = true;
             }
+            assertTrue(caught);
             caught = false;
             try {
                 map.lastKey();
