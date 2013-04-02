@@ -169,46 +169,43 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		}
 
 		public void remove() {
-			if (expectedModCount == subMap.m.modCount) {
-				if (expectedModCount == subMap.m.modCount) {
-					K key = (node != null) ? node.keys[offset] : null;
-					if (lastNode != null) {
-						int idx = lastOffset;
-						if (idx == lastNode.left_idx) {
-							subMap.m.removeLeftmost(lastNode);
-						} else if (idx == lastNode.right_idx) {
-							subMap.m.removeRightmost(lastNode);
-						} else {
-							int lastRight = lastNode.right_idx;
-							key = subMap.m.removeMiddleElement(lastNode, idx);
-							if (key == null && lastRight > lastNode.right_idx) {
-								// removed from right
-								offset--;
-							}
-						}
-						if (null != key) {
-							// the node has been cleared
-							Entry<K, V> entry = subMap.m.find(key);
-							if (this.subMap.isInRange(key)) {
-								node = entry.node;
-								offset = entry.index;
-								boundaryPair = getBoundaryNode();
-							} else {
-								node = null;
-							}
-						}
-						if (node != null && !this.subMap.isInRange(node.keys[offset])) {
-							node = null;
-						}
-						lastNode = null;
-						expectedModCount++;
-					} else {
-						throw new IllegalStateException();
-					}
-				}
-			} else {
+			if (lastNode == null) {
+				throw new IllegalStateException();
+			}
+			if (expectedModCount != subMap.m.modCount) {
 				throw new ConcurrentModificationException();
 			}
+
+			K key = (node != null) ? node.keys[offset] : null;
+			int idx = lastOffset;
+			if (idx == lastNode.left_idx) {
+				subMap.m.removeLeftmost(lastNode);
+			} else if (idx == lastNode.right_idx) {
+				subMap.m.removeRightmost(lastNode);
+			} else {
+				int lastRight = lastNode.right_idx;
+				key = subMap.m.removeMiddleElement(lastNode, idx);
+				if (key == null && lastRight > lastNode.right_idx) {
+					// removed from right
+					offset--;
+				}
+			}
+			if (null != key) {
+				// the node has been cleared
+				Entry<K, V> entry = subMap.m.find(key);
+				if (this.subMap.isInRange(key)) {
+					node = entry.node;
+					offset = entry.index;
+					boundaryPair = getBoundaryNode();
+				} else {
+					node = null;
+				}
+			}
+			if (node != null && !this.subMap.isInRange(node.keys[offset])) {
+				node = null;
+			}
+			lastNode = null;
+			expectedModCount++;
 		}
 
 		abstract boolean hasNext();
@@ -224,25 +221,21 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		final TreeMap.Entry<K, V> getBoundaryNode() {
-			TreeMap.Entry<K, V> entry = null;
 			if (subMap.toEnd) {
-				entry = subMap.hiInclusive ? subMap.smallerOrEqualEntry(subMap.hi) : subMap.smallerEntry(subMap.hi);
-			} else {
-				entry = subMap.theBiggestEntry();
+				return subMap.hiInclusive ? subMap.smallerOrEqualEntry(subMap.hi) : subMap.smallerEntry(subMap.hi);
 			}
-			if (entry == null) {
-				entry = subMap.findStartNode();
-			}
-			return entry;
+			return subMap.theBiggestEntry();
 		}
 
 		@Override
 		public T next() {
-			if (expectedModCount != subMap.m.modCount) {
-				throw new ConcurrentModificationException();
-			} else if (node == null) {
+			if (node == null) {
 				throw new NoSuchElementException();
 			}
+			if (expectedModCount != subMap.m.modCount) {
+				throw new ConcurrentModificationException();
+			}
+
 			lastNode = node;
 			lastOffset = offset;
 			if (offset != node.right_idx) {
@@ -253,7 +246,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					offset = node.left_idx;
 				}
 			}
-			boundaryPair = getBoundaryNode();
+//			boundaryPair = getBoundaryNode();
 			if (boundaryPair != null && boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
@@ -363,7 +356,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					offset = node.right_idx;
 				}
 			}
-			boundaryPair = getBoundaryNode();
+//			boundaryPair = getBoundaryNode();
 			if (boundaryPair != null && boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
@@ -379,36 +372,33 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		public final void remove() {
-			if (expectedModCount == subMap.m.modCount) {
-				if (expectedModCount == subMap.m.modCount) {
-					K key = (node != null) ? node.keys[offset] : null;
-					if (lastNode != null) {
-						int idx = lastOffset;
-						if (idx == lastNode.left_idx) {
-							subMap.m.removeLeftmost(lastNode);
-						} else if (idx == lastNode.right_idx) {
-							subMap.m.removeRightmost(lastNode);
-						} else {
-							subMap.m.removeMiddleElement(lastNode, idx);
-						}
-						if (null != key) {
-							// the node has been cleared
-							Entry<K, V> entry = subMap.m.find(key);
-							node = entry.node;
-							offset = entry.index;
-							boundaryPair = getBoundaryNode();
-						} else {
-							node = null;
-						}
-						lastNode = null;
-						expectedModCount++;
-					} else {
-						throw new IllegalStateException();
-					}
-				}
-			} else {
+			if (lastNode == null) {
+				throw new IllegalStateException();
+			}
+			if (expectedModCount != subMap.m.modCount) {
 				throw new ConcurrentModificationException();
 			}
+
+			K key = (node != null) ? node.keys[offset] : null;
+			int idx = lastOffset;
+			if (idx == lastNode.left_idx) {
+				subMap.m.removeLeftmost(lastNode);
+			} else if (idx == lastNode.right_idx) {
+				subMap.m.removeRightmost(lastNode);
+			} else {
+				subMap.m.removeMiddleElement(lastNode, idx);
+			}
+			if (null != key) {
+				// the node has been cleared
+				Entry<K, V> entry = subMap.m.find(key);
+				node = entry.node;
+				offset = entry.index;
+				boundaryPair = getBoundaryNode();
+			} else {
+				node = null;
+			}
+			lastNode = null;
+			expectedModCount++;
 		}
 	}
 
@@ -4626,36 +4616,35 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		}
 
 		final public void remove() {
-			if (expectedModCount == backingMap.modCount) {
-				if (lastNode != null) {
-					int idx = lastOffset;
-					K key = null;
-					if (idx == lastNode.left_idx) {
-						key = backingMap.removeLeftmost(lastNode);
-					} else if (idx == lastNode.right_idx) {
-						key = backingMap.removeRightmost(lastNode);
-					} else {
-						int lastRight = lastNode.right_idx;
-						key = backingMap.removeMiddleElement(node, idx);
-						if (null == key && lastRight > lastNode.right_idx) {
-							// removed from right
-							offset--;
-						}
-					}
-					if (null != key) {
-						// the node has been cleared, need to find new node
-						Entry<K, V> entry = backingMap.find(key);
-						node = entry.node;
-						offset = entry.index;
-					}
-					lastNode = null;
-					expectedModCount++;
-				} else {
-					throw new IllegalStateException();
-				}
-			} else {
+			if (lastNode == null) {
+				throw new IllegalStateException();
+			}
+			if (expectedModCount != backingMap.modCount) {
 				throw new ConcurrentModificationException();
 			}
+
+			int idx = lastOffset;
+			K key = null;
+			if (idx == lastNode.left_idx) {
+				key = backingMap.removeLeftmost(lastNode);
+			} else if (idx == lastNode.right_idx) {
+				key = backingMap.removeRightmost(lastNode);
+			} else {
+				int lastRight = lastNode.right_idx;
+				key = backingMap.removeMiddleElement(node, idx);
+				if (null == key && lastRight > lastNode.right_idx) {
+					// removed from right
+					offset--;
+				}
+			}
+			if (null != key) {
+				// the node has been cleared, need to find new node
+				Entry<K, V> entry = backingMap.find(key);
+				node = entry.node;
+				offset = entry.index;
+			}
+			lastNode = null;
+			expectedModCount++;
 		}
 	}
 
