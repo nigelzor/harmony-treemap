@@ -3286,6 +3286,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	}
 
 	private V putImpl(K key, V value) {
+		if (key == null && comparator == null) {
+			throw new NullPointerException();
+		}
 		if (root == null) {
 			root = createNode(key, value);
 			size = 1;
