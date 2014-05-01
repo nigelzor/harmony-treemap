@@ -47,29 +47,11 @@ public class TreeMapTest extends junit.framework.TestCase {
         }
     }
 
-    // Regression for Harmony-1026
-    public static class MockComparator<T extends Comparable<T>> implements
-            Comparator<T>, Serializable {
-
-        @Override
-		public int compare(T o1, T o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            if (null == o1 || null == o2) {
-                return -1;
-            }
-            T c1 = o1;
-            T c2 = o2;
-            return c1.compareTo(c2);
-        }
-    }
-
     // Regression for Harmony-1161
-    class MockComparatorNullTolerable implements Comparator<String> {
+    public static class MockComparatorNullTolerable<T extends Comparable<T>> implements Comparator<T> {
 
         @Override
-		public int compare(String o1, String o2) {
+        public int compare(T o1, T o2) {
             if (o1 == o2) {
                 return 0;
             }
@@ -295,7 +277,7 @@ public class TreeMapTest extends junit.framework.TestCase {
 
         // Regression for Harmony-1026
         TreeMap<Integer, Double> map = new TreeMap<Integer, Double>(
-                new MockComparator());
+                new MockComparatorNullTolerable<Integer>());
         map.put(1, 2.1);
         map.put(2, 3.1);
         map.put(3, 4.5);
@@ -561,7 +543,7 @@ public class TreeMapTest extends junit.framework.TestCase {
 
         // Regression for Harmony-1161
         TreeMap<String, String> treeMapWithNull = new TreeMap<String, String>(
-                new MockComparatorNullTolerable());
+                new MockComparatorNullTolerable<String>());
         treeMapWithNull.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
         treeMapWithNull.put(null, "value2"); //$NON-NLS-1$
         SortedMap<String, String> subMapWithNull = treeMapWithNull.subMap(null,
@@ -1447,15 +1429,7 @@ public class TreeMapTest extends junit.framework.TestCase {
         assertEquals(0, mapIntObj.size());
 
         // a special comparator dealing with null key
-        tm = new TreeMap(new Comparator() {
-            @Override
-			public int compare(Object o1, Object o2) {
-                if (o1 == null) {
-                    return -1;
-                }
-                return ((String) o1).compareTo((String) o2);
-            }
-        });
+        tm = new TreeMap<String, Integer>(new MockComparatorNullTolerable<String>());
         tm.put(new String("1st"), 1);
         tm.put(new String("2nd"), 2);
         tm.put(new String("3rd"), 3);
@@ -1466,17 +1440,16 @@ public class TreeMapTest extends junit.framework.TestCase {
         assertTrue(s.containsValue(-1));
         assertTrue(s.containsValue(1));
         assertTrue(s.containsValue(2));
-        assertFalse(s.containsKey(null));
-        // RI fails here
-        // assertTrue(s.containsKey("1st"));
-        // assertTrue(s.containsKey("2nd"));
+        assertTrue(s.containsKey(null));
+        assertTrue(s.containsKey("1st"));
+        assertTrue(s.containsKey("2nd"));
         s = tm.descendingMap();
         s = s.subMap("3rd", null);
-        // assertEquals(4, s.size());
-//        assertTrue(s.containsValue(-1));
-//        assertTrue(s.containsValue(1));
-//        assertTrue(s.containsValue(2));
-//        assertTrue(s.containsValue(3));
+        assertEquals(3, s.size());
+        assertFalse(s.containsValue(-1));
+        assertTrue(s.containsValue(1));
+        assertTrue(s.containsValue(2));
+        assertTrue(s.containsValue(3));
         assertFalse(s.containsKey(null));
         assertTrue(s.containsKey("1st"));
         assertTrue(s.containsKey("2nd"));
@@ -1486,7 +1459,7 @@ public class TreeMapTest extends junit.framework.TestCase {
     public void test_subMap_NullTolerableComparator() {
         // Null Tolerable Comparator
         TreeMap<String, String> treeMapWithNull = new TreeMap<String, String>(
-                new MockComparatorNullTolerable());
+                new MockComparatorNullTolerable<String>());
         treeMapWithNull.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
         treeMapWithNull.put(null, "value2"); //$NON-NLS-1$
         SortedMap<String, String> subMapWithNull = treeMapWithNull.subMap(null,
@@ -1602,7 +1575,7 @@ public class TreeMapTest extends junit.framework.TestCase {
 
         // Null Tolerable Comparator
         TreeMap<String, String> treeMapWithNull = new TreeMap<String, String>(
-                new MockComparatorNullTolerable());
+                new MockComparatorNullTolerable<String>());
         treeMapWithNull.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
         treeMapWithNull.put(null, "value2"); //$NON-NLS-1$
         SortedMap<String, String> subMapWithNull = treeMapWithNull.headMap(
@@ -1717,7 +1690,7 @@ public class TreeMapTest extends junit.framework.TestCase {
 
         // Null Tolerable Comparator
         TreeMap<String, String> treeMapWithNull = new TreeMap<String, String>(
-                new MockComparatorNullTolerable());
+                new MockComparatorNullTolerable<String>());
         treeMapWithNull.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
         treeMapWithNull.put(null, "value2"); //$NON-NLS-1$
         SortedMap<String, String> subMapWithNull = treeMapWithNull.tailMap(

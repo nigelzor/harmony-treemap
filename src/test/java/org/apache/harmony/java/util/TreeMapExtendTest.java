@@ -122,7 +122,7 @@ public class TreeMapExtendTest extends TestCase {
     }
 
     public void test_TreeMap_Constructor_Comparator() {
-        TreeMapTest.MockComparator mockComparator = new TreeMapTest.MockComparator();
+        TreeMapTest.MockComparatorNullTolerable mockComparator = new TreeMapTest.MockComparatorNullTolerable();
         TreeMap treeMap = new TreeMap(mockComparator);
 
         assertEquals(mockComparator, treeMap.comparator());
@@ -13153,7 +13153,7 @@ public class TreeMapExtendTest extends TestCase {
     @Override
     protected void setUp() {
         tm = new TreeMap();
-        tm_comparator = new TreeMap(new TreeMapTest.MockComparator());
+        tm_comparator = new TreeMap(new TreeMapTest.MockComparatorNullTolerable());
         for (int i = 0; i < objArray.length; i++) {
             Object x = objArray[i] = new Integer(i);
             tm.put(x.toString(), x);
@@ -13478,15 +13478,7 @@ public class TreeMapExtendTest extends TestCase {
     }
 
     public void testname() throws Exception {
-        TreeMap nullTree = new TreeMap(new Comparator() {
-            @Override
-			public int compare(Object o1, Object o2) {
-                if (o1 == null) {
-                    return o2 == null ? 0 : -1;
-                }
-                return ((String) o1).compareTo((String) o2);
-            }
-        });
+        TreeMap<String, Integer> nullTree = new TreeMap<String, Integer>(new TreeMapTest.MockComparatorNullTolerable<String>());
         nullTree.put(new String("One"), 1);
         nullTree.put(new String("Two"), 2);
         nullTree.put(new String("Three"), 3);

@@ -1707,7 +1707,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			while (node != null) {
 				K[] keys = node.keys;
 				int left_idx = node.left_idx;
-				int result = object != null ? object.compareTo(keys[left_idx]) : -comparator().compare(keys[left_idx], keyK);
+				int result = cmp(object, keyK, keys[left_idx]);
 				if (result < 0) {
 					node = node.left;
 				} else {
@@ -1815,7 +1815,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			while (node != null) {
 				K[] keys = node.keys;
 				int left_idx = node.left_idx;
-				int result = object != null ? object.compareTo(keys[left_idx]) : -comparator().compare(keys[left_idx], keyK);
+				int result = cmp(object, keyK, keys[left_idx]);
 				if (result <= 0) {
 					node = node.left;
 				} else {
@@ -2710,7 +2710,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		while (node != null) {
 			K[] keys = node.keys;
 			int left_idx = node.left_idx;
-			int result = object != null ? object.compareTo(keys[left_idx]) : -comparator.compare(keys[left_idx], keyK);
+			int result = cmp(object, keyK, keys[left_idx]);
 			if (result < 0) {
 				node = node.left;
 			} else if (result == 0) {
@@ -3710,7 +3710,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	K removeRightmost(Node<K, V> node) {
 		int index = node.right_idx;
 		// store the next key, return if the node is deleted
-		K key = (node != null && node.next != null) ? node.next.keys[node.next.left_idx] : null;
+		K key = (node.next != null) ? node.next.keys[node.next.left_idx] : null;
 		if (node.size == 1) {
 			deleteNode(node);
 		} else if (node.prev != null && (Node.NODE_SIZE - 1 - node.prev.right_idx) > node.size) {
