@@ -439,9 +439,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 	@Override
 	public int hashCode() {
 		int result = 0;
-		Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		while (it.hasNext()) {
-			result += it.next().hashCode();
+		for (Entry<K, V> entry : entrySet()) {
+			result += entry.hashCode();
 		}
 		return result;
 	}

@@ -1395,10 +1395,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			loInclusive = hiInclusive = false;
 		}
 
-		Node<K, V> findNode(K key) {
-			return m.findNode(key);
-		}
-
 		/*
 		 * The basic public methods.
 		 */
@@ -1760,11 +1756,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			return null;
 		}
 
-		final TreeMap.Entry<K, V> biggerOrEqualEntry(K key) {
-			TreeMap.Entry<K, V> result = findCeilingEntry(key);
-			return (null != result && (!toEnd || checkUpperBound(result.getKey()))) ? result : null;
-		}
-
 		// find the node whose key equals startKey if any, or the next bigger
 		// one than startKey if start exclusive
 		private TreeMap.Entry<K, V> findStartNode() {
@@ -1955,11 +1946,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 
 			return node;
-		}
-
-		final TreeMap.Entry<K, V> biggerEntry(K key) {
-			TreeMap.Entry<K, V> result = findHigherEntry(key);
-			return (null != result && (!toEnd || checkUpperBound(result.getKey()))) ? result : null;
 		}
 
 		private TreeMap.Entry<K, V> findHigherEntry(K key) {
@@ -2621,9 +2607,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	public TreeMap(SortedMap<K, ? extends V> map) {
 		this(map.comparator());
 		Node<K, V> lastNode = null;
-		Iterator<? extends Map.Entry<K, ? extends V>> it = map.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<K, ? extends V> entry = it.next();
+		for (Map.Entry<K, ? extends V> entry : map.entrySet()) {
 			lastNode = addToLast(lastNode, entry.getKey(), entry.getValue());
 		}
 	}
@@ -2801,9 +2785,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	}
 
 	@SuppressWarnings("unchecked")
-	Entry<K, V> find(Object keyObj) {
-		Comparable<K> object = comparator == null ? toComparable((K) keyObj) : null;
-		K keyK = (K) keyObj;
+	Entry<K, V> find(Object key) {
+		Comparable<K> object = comparator == null ? toComparable((K) key) : null;
+		K keyK = (K) key;
 		Node<K, V> node = root;
 		while (node != null) {
 			K[] keys = node.keys;
@@ -3117,33 +3101,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		throw new NoSuchElementException();
 	}
 
-	Node<K, V> findNode(K key) {
-		Comparable<K> object = comparator == null ? toComparable(key) : null;
-		K keyK = key;
-		Node<K, V> node = root;
-		while (node != null) {
-			K[] keys = node.keys;
-			int left_idx = node.left_idx;
-			int result = cmp(object, keyK, keys[left_idx]);
-			if (result < 0) {
-				node = node.left;
-			} else if (result == 0) {
-				return node;
-			} else {
-				int right_idx = node.right_idx;
-				if (left_idx != right_idx) {
-					result = cmp(object, keyK, keys[right_idx]);
-				}
-				if (result > 0) {
-					node = node.right;
-				} else {
-					return node;
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Returns the value of the mapping with the specified key.
 	 *
@@ -3261,10 +3218,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	 */
 	@Override
 	public V put(K key, V value) {
-		return putImpl(key, value);
-	}
-
-	private V putImpl(K key, V value) {
 		if (key == null && comparator == null) {
 			throw new NullPointerException();
 		}
@@ -3506,10 +3459,10 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	private void appendFromRight(Node<K, V> node, K keyObj, V value) {
 		if (node.right_idx == Node.NODE_SIZE - 1) {
 			int left_idx = node.left_idx;
-			int left_idxMinus1 = left_idx - 1;
-			System.arraycopy(node.keys, left_idx, node.keys, left_idxMinus1, Node.NODE_SIZE - left_idx);
-			System.arraycopy(node.values, left_idx, node.values, left_idxMinus1, Node.NODE_SIZE - left_idx);
-			node.left_idx = left_idxMinus1;
+			int new_left = left_idx - 1;
+			System.arraycopy(node.keys, left_idx, node.keys, new_left, Node.NODE_SIZE - left_idx);
+			System.arraycopy(node.values, left_idx, node.values, new_left, Node.NODE_SIZE - left_idx);
+			node.left_idx = new_left;
 		} else {
 			node.right_idx++;
 		}
@@ -3639,7 +3592,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> map) {
 		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
-			this.putImpl(entry.getKey(), entry.getValue());
+			put(entry.getKey(), entry.getValue());
 		}
 	}
 
