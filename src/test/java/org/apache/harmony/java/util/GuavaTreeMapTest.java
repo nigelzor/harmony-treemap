@@ -1,6 +1,6 @@
 package org.apache.harmony.java.util;
 
-import com.google.common.collect.testing.SortedMapTestSuiteBuilder;
+import com.google.common.collect.testing.NavigableMapTestSuiteBuilder;
 import com.google.common.collect.testing.TestStringSortedMapGenerator;
 import com.google.common.collect.testing.features.CollectionFeature;
 import com.google.common.collect.testing.features.CollectionSize;
@@ -26,7 +26,7 @@ public class GuavaTreeMapTest extends TestSuite {
 	}
 
 	public static Test suite() {
-		return SortedMapTestSuiteBuilder.using(new TreeMapGenerator())
+		return NavigableMapTestSuiteBuilder.using(new TreeMapGenerator())
 				.named("TreeMap")
 				.withFeatures(CollectionSize.ANY, MapFeature.GENERAL_PURPOSE, MapFeature.ALLOWS_NULL_VALUES, CollectionFeature.SUPPORTS_ITERATOR_REMOVE)
 				.suppressing(MapEntrySetTester.getContainsEntryWithIncomparableKeyMethod())

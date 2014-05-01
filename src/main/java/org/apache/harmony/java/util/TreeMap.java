@@ -959,7 +959,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		public K ceiling(K e) {
-			Entry<K, V> ret = map.findFloorEntry(e);
+			Entry<K, V> ret = map.findCeilingEntry(e);
 			if (ret != null && map.isInRange(ret.key)) {
 				return ret.key;
 			} else {
@@ -3208,30 +3208,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	 */
 	@Override
 	public Set<K> keySet() {
-		if (keySet == null) {
-			keySet = new AbstractSet<K>() {
-				@Override
-				public boolean contains(Object object) {
-					return containsKey(object);
-				}
-
-				@Override
-				public int size() {
-					return size;
-				}
-
-				@Override
-				public void clear() {
-					TreeMap.this.clear();
-				}
-
-				@Override
-				public Iterator<K> iterator() {
-					return new UnboundedKeyIterator<K, V>(TreeMap.this);
-				}
-			};
-		}
-		return keySet;
+		return navigableKeySet();
 	}
 
 	/**
