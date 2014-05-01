@@ -234,7 +234,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					offset = node.left_idx;
 				}
 			}
-//			boundaryPair = getBoundaryNode();
+			boundaryPair = getBoundaryNode();
 			if (boundaryPair != null && boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
