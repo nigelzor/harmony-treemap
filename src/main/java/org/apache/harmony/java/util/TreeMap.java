@@ -144,16 +144,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		AbstractSubMapIterator(final NavigableSubMap<K, V> map) {
 			subMap = map;
 			expectedModCount = subMap.m.modCount;
-
-			TreeMap.Entry<K, V> entry = map.findStartNode();
-			if (entry != null) {
-				if (map.toEnd && !map.checkUpperBound(entry.key)) {
-				} else {
-					node = entry.node;
-					offset = entry.index;
-					boundaryPair = getBoundaryNode();
-				}
-			}
 		}
 
 		public void remove() {
@@ -205,6 +195,15 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		AscendingSubMapIterator(NavigableSubMap<K, V> map) {
 			super(map);
+			TreeMap.Entry<K, V> entry = map.findStartNode();
+			if (entry != null) {
+				if (map.toEnd && !map.checkUpperBound(entry.key)) {
+				} else {
+					node = entry.node;
+					offset = entry.index;
+					boundaryPair = getBoundaryNode();
+				}
+			}
 		}
 
 		@Override
@@ -1260,7 +1259,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					}
 					int right_idx = node.right_idx;
 					if (left_idx != right_idx) {
-						result = cmp(object, key, keys[right_idx]);
+						result = cmp(object, keyK, keys[right_idx]);
 					}
 					if (result >= 0) {
 						foundNode = node;
@@ -1273,7 +1272,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 						int low = left_idx + 1, mid = 0, high = right_idx - 1;
 						while (low <= high && result != 0) {
 							mid = (low + high) >> 1;
-							result = cmp(object, key, keys[mid]);
+							result = cmp(object, keyK, keys[mid]);
 							if (result >= 0) {
 								foundNode = node;
 								foundIndex = mid;
@@ -2477,7 +2476,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				}
 				int right_idx = node.right_idx;
 				if (left_idx != right_idx) {
-					result = cmp(object, key, keys[right_idx]);
+					result = cmp(object, keyK, keys[right_idx]);
 				}
 				if (result >= 0) {
 					foundNode = node;
@@ -2490,7 +2489,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					int low = left_idx + 1, mid = 0, high = right_idx - 1;
 					while (low <= high && result != 0) {
 						mid = (low + high) >> 1;
-						result = cmp(object, key, keys[mid]);
+						result = cmp(object, keyK, keys[mid]);
 						if (result >= 0) {
 							foundNode = node;
 							foundIndex = mid;
@@ -2535,7 +2534,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				foundIndex = left_idx;
 				int right_idx = node.right_idx;
 				if (left_idx != right_idx) {
-					result = cmp(object, key, keys[right_idx]);
+					result = cmp(object, keyK, keys[right_idx]);
 				}
 				if (result > 0) {
 					foundNode = node;
@@ -2545,7 +2544,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					int low = left_idx + 1, mid = 0, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >> 1;
-						result = cmp(object, key, keys[mid]);
+						result = cmp(object, keyK, keys[mid]);
 						if (result > 0) {
 							foundNode = node;
 							foundIndex = mid;
@@ -4002,27 +4001,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		int lastOffset;
 
-		AbstractMapIterator(TreeMap<K, V> map, Node<K, V> startNode, int startOffset) {
+		AbstractMapIterator(TreeMap<K, V> map) {
 			backingMap = map;
 			expectedModCount = map.modCount;
-			if (startNode != null) {
-				node = startNode;
-				offset = startOffset;
-			} else {
-				Entry<K, V> entry = map.findSmallestEntry();
-				if (entry != null) {
-					node = map.findSmallestEntry().node;
-					offset = node.left_idx;
-				}
+			node = minimum(map.root);
+			if (node != null) {
+				offset = node.left_idx;
 			}
-		}
-
-		AbstractMapIterator(TreeMap<K, V> map, Node<K, V> startNode) {
-			this(map, startNode, startNode == null ? 0 : startNode.left_idx);
-		}
-
-		AbstractMapIterator(TreeMap<K, V> map) {
-			this(map, minimum(map.root));
 		}
 
 		public boolean hasNext() {
@@ -4082,10 +4067,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 	static class UnboundedEntryIterator<K, V> extends AbstractMapIterator<K, V> implements Iterator<Map.Entry<K, V>> {
 
-		UnboundedEntryIterator(TreeMap<K, V> map, Node<K, V> startNode, int startOffset) {
-			super(map, startNode, startOffset);
-		}
-
 		UnboundedEntryIterator(TreeMap<K, V> map) {
 			super(map);
 		}
@@ -4099,10 +4080,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 	static class UnboundedKeyIterator<K, V> extends AbstractMapIterator<K, V> implements Iterator<K> {
 
-		UnboundedKeyIterator(TreeMap<K, V> map, Node<K, V> startNode, int startOffset) {
-			super(map, startNode, startOffset);
-		}
-
 		UnboundedKeyIterator(TreeMap<K, V> map) {
 			super(map);
 		}
@@ -4115,10 +4092,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	}
 
 	static class UnboundedValueIterator<K, V> extends AbstractMapIterator<K, V> implements Iterator<V> {
-
-		UnboundedValueIterator(TreeMap<K, V> map, Node<K, V> startNode, int startOffset) {
-			super(map, startNode, startOffset);
-		}
 
 		UnboundedValueIterator(TreeMap<K, V> map) {
 			super(map);
