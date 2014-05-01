@@ -2671,6 +2671,8 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		try {
 			TreeMap<K, V> clone = (TreeMap<K, V>) super.clone();
 			clone.entrySet = null;
+			clone.descendingMap = null;
+			clone.navigableKeySet = null;
 			if (root != null) {
 				clone.root = root.clone(null);
 				// restore prev/next chain
