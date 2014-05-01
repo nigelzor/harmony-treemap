@@ -28,7 +28,8 @@ public class GuavaTreeMapTest extends TestSuite {
 	public static Test suite() {
 		return NavigableMapTestSuiteBuilder.using(new TreeMapGenerator())
 				.named("TreeMap")
-				.withFeatures(CollectionSize.ANY, MapFeature.GENERAL_PURPOSE, MapFeature.ALLOWS_NULL_VALUES, CollectionFeature.SUPPORTS_ITERATOR_REMOVE)
+				.withFeatures(CollectionSize.ANY, MapFeature.GENERAL_PURPOSE, MapFeature.ALLOWS_NULL_VALUES,
+						CollectionFeature.SUPPORTS_ITERATOR_REMOVE, CollectionFeature.SERIALIZABLE)
 				.suppressing(MapEntrySetTester.getContainsEntryWithIncomparableKeyMethod())
 				.createTestSuite();
 	}
