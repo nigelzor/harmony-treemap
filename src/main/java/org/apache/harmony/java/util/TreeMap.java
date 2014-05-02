@@ -154,30 +154,21 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				throw new ConcurrentModificationException();
 			}
 
-			K key = (node != null) ? node.keys[offset] : null;
+			Entry<K, V> entry;
 			int idx = lastOffset;
 			if (idx == lastNode.left_idx) {
-				subMap.m.removeLeftmost(lastNode);
+				entry = subMap.m.removeLeftmost(lastNode, false);
 			} else if (idx == lastNode.right_idx) {
-				subMap.m.removeRightmost(lastNode);
+				entry = subMap.m.removeRightmost(lastNode, false);
 			} else {
-				int lastRight = lastNode.right_idx;
-				key = subMap.m.removeMiddleElement(lastNode, idx);
-				if (key == null && lastRight > lastNode.right_idx) {
-					// removed from right
-					offset--;
-				}
+				entry = subMap.m.removeMiddleElement(lastNode, idx, false);
 			}
-			if (null != key) {
-				// the node has been cleared
-				Entry<K, V> entry = subMap.m.find(key);
-				if (this.subMap.isInRange(key)) {
-					node = entry.node;
-					offset = entry.index;
-					boundaryPair = getBoundaryNode();
-				} else {
-					node = null;
-				}
+			if (entry != null) {
+				node = entry.node;
+				offset = entry.index;
+				boundaryPair = getBoundaryNode();
+			} else {
+				node = null;
 			}
 			if (node != null && !this.subMap.isInRange(node.keys[offset])) {
 				node = null;
@@ -230,7 +221,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					offset = node.left_idx;
 				}
 			}
-			boundaryPair = getBoundaryNode();
+//			boundaryPair = getBoundaryNode();
 			if (boundaryPair != null && boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
@@ -340,7 +331,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					offset = node.right_idx;
 				}
 			}
-			boundaryPair = getBoundaryNode();
+//			boundaryPair = getBoundaryNode();
 			if (boundaryPair != null && boundaryPair.node == lastNode && boundaryPair.index == lastOffset) {
 				node = null;
 			}
@@ -363,22 +354,23 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				throw new ConcurrentModificationException();
 			}
 
-			K key = (node != null) ? node.keys[offset] : null;
+			Entry<K, V> entry;
 			int idx = lastOffset;
 			if (idx == lastNode.left_idx) {
-				subMap.m.removeLeftmost(lastNode);
+				entry = subMap.m.removeLeftmost(lastNode, true);
 			} else if (idx == lastNode.right_idx) {
-				subMap.m.removeRightmost(lastNode);
+				entry = subMap.m.removeRightmost(lastNode, true);
 			} else {
-				subMap.m.removeMiddleElement(lastNode, idx);
+				entry = subMap.m.removeMiddleElement(lastNode, idx, true);
 			}
-			if (null != key) {
-				// the node has been cleared
-				Entry<K, V> entry = subMap.m.find(key);
+			if (entry != null) {
 				node = entry.node;
 				offset = entry.index;
 				boundaryPair = getBoundaryNode();
 			} else {
+				node = null;
+			}
+			if (node != null && !this.subMap.isInRange(node.keys[offset])) {
 				node = null;
 			}
 			lastNode = null;
@@ -3067,7 +3059,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				node = node.left;
 			} else if (result == 0) {
 				V value = node.values[left_idx];
-				removeLeftmost(node);
+				removeLeftmost(node, false);
 				return value;
 			} else {
 				int right_idx = node.right_idx;
@@ -3078,7 +3070,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					node = node.right;
 				} else if (result == 0) {
 					V value = node.values[right_idx];
-					removeRightmost(node);
+					removeRightmost(node, false);
 					return value;
 				} else { /* search in node */
 					int low = left_idx + 1, mid, high = right_idx - 1;
@@ -3089,7 +3081,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 							low = mid + 1;
 						} else if (result == 0) {
 							V value = node.values[mid];
-							removeMiddleElement(node, mid);
+							removeMiddleElement(node, mid, false);
 							return value;
 						} else {
 							high = mid - 1;
@@ -3102,12 +3094,21 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		return null;
 	}
 
-	K removeLeftmost(Node<K, V> node) {
+	private static <K, V> int natural(Node<K, V> node, boolean reverse) {
+		if (node == null) {
+			return 0;
+		}
+		return reverse ? node.right_idx : node.left_idx;
+	}
+
+	Entry<K, V> removeLeftmost(Node<K, V> node, boolean reverse) {
 		int index = node.left_idx;
-		// record next key and record if the node is removed
-		K key = (index + 1 <= node.right_idx) ? node.keys[index + 1] : null;
+		Node<K, V> sn;
+		int si;
 		if (node.size == 1) {
 			deleteNode(node);
+			sn = reverse ? node.prev : node.next;
+			si = natural(sn, reverse);
 		} else if (node.prev != null && (Node.NODE_SIZE - 1 - node.prev.right_idx) > node.size) {
 			// move all to prev node and kill it
 			Node<K, V> prev = node.prev;
@@ -3117,6 +3118,8 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			prev.right_idx += size;
 			prev.size += size;
 			deleteNode(node);
+			sn = prev;
+			si = reverse ? prev.right_idx - size : prev.right_idx - size + 1;
 		} else if (node.next != null && (node.next.left_idx) > node.size) {
 			// move all to next node and kill it
 			Node<K, V> next = node.next;
@@ -3127,32 +3130,41 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			System.arraycopy(node.values, index + 1, next.values, next_new_left, size);
 			next.size += size;
 			deleteNode(node);
+			sn = reverse ? node.prev : next;
+			si = natural(sn, reverse);
 		} else {
 			node.keys[index] = null;
 			node.values[index] = null;
 			node.left_idx++;
 			node.size--;
 			Node<K, V> prev = node.prev;
-			key = null;
+			sn = reverse ? prev : node;
+			si = natural(sn, reverse);
 			if (prev != null && prev.size == 1) {
 				node.size++;
 				node.left_idx--;
 				node.keys[node.left_idx] = prev.keys[prev.left_idx];
 				node.values[node.left_idx] = prev.values[prev.left_idx];
 				deleteNode(prev);
+				if (reverse) {
+					sn = node;
+					si = node.left_idx;
+				}
 			}
 		}
 		modCount++;
 		size--;
-		return key;
+		return sn == null ? null : newEntry(sn, si);
 	}
 
-	K removeRightmost(Node<K, V> node) {
+	Entry<K, V> removeRightmost(Node<K, V> node, boolean reverse) {
 		int index = node.right_idx;
-		// store the next key, return if the node is deleted
-		K key = (node.next != null) ? node.next.keys[node.next.left_idx] : null;
+		Node<K, V> sn;
+		int si;
 		if (node.size == 1) {
 			deleteNode(node);
+			sn = reverse ? node.prev : node.next;
+			si = natural(sn, reverse);
 		} else if (node.prev != null && (Node.NODE_SIZE - 1 - node.prev.right_idx) > node.size) {
 			// move all to prev node and kill it
 			Node<K, V> prev = node.prev;
@@ -3163,6 +3175,8 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			prev.right_idx += size;
 			prev.size += size;
 			deleteNode(node);
+			sn = reverse ? prev : node.next;
+			si = natural(sn, reverse);
 		} else if (node.next != null && (node.next.left_idx) > node.size) {
 			// move all to next node and kill it
 			Node<K, V> next = node.next;
@@ -3174,32 +3188,39 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			System.arraycopy(node.values, left_idx, next.values, next_new_left, size);
 			next.size += size;
 			deleteNode(node);
+			sn = next;
+			si = reverse ? next.left_idx + size - 1 : next.left_idx + size;
 		} else {
 			node.keys[index] = null;
 			node.values[index] = null;
 			node.right_idx--;
 			node.size--;
 			Node<K, V> next = node.next;
+			sn = reverse ? node : next;
+			si = natural(sn, reverse);
 			if (next != null && next.size == 1) {
 				node.size++;
 				node.right_idx++;
 				node.keys[node.right_idx] = next.keys[next.left_idx];
 				node.values[node.right_idx] = next.values[next.left_idx];
 				deleteNode(next);
-			} else {
-				key = null;
+				if (!reverse) {
+					sn = node;
+					si = node.right_idx;
+				}
 			}
 		}
 		modCount++;
 		size--;
-		return key;
+		return sn == null ? null : newEntry(sn, si);
 	}
 
-	K removeMiddleElement(Node<K, V> node, int index) {
+	Entry<K, V> removeMiddleElement(Node<K, V> node, int index, boolean reverse) {
 		// this function is called iff index if some middle element;
 		// so node.left_idx < index < node.right_idx
 		// condition above assume that node.size > 1
-		K ret = null;
+		Node<K, V> sn;
+		int si;
 		if (node.prev != null && (Node.NODE_SIZE - 1 - node.prev.right_idx) > node.size) {
 			// move all to prev node and kill it
 			Node<K, V> prev = node.prev;
@@ -3211,10 +3232,11 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			size = node.right_idx - index;
 			System.arraycopy(node.keys, index + 1, prev.keys, prev.right_idx + 1, size);
 			System.arraycopy(node.values, index + 1, prev.values, prev.right_idx + 1, size);
-			ret = prev.keys[prev.right_idx + 1];
 			prev.right_idx += size;
 			prev.size += (node.size - 1);
 			deleteNode(node);
+			sn = prev;
+			si = reverse ? prev.right_idx - size : prev.right_idx - size + 1;
 		} else if (node.next != null && (node.next.left_idx) > node.size) {
 			// move all to next node and kill it
 			Node<K, V> next = node.next;
@@ -3228,9 +3250,10 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			size = node.right_idx - index;
 			System.arraycopy(node.keys, index + 1, next.keys, next_new_left, size);
 			System.arraycopy(node.values, index + 1, next.values, next_new_left, size);
-			ret = next.keys[next_new_left];
 			next.size += (node.size - 1);
 			deleteNode(node);
+			sn = next;
+			si = reverse ? next.left_idx - node.left_idx + index - 1 : next.left_idx - node.left_idx + index;
 		} else {
 			int moveFromRight = node.right_idx - index;
 			int left_idx = node.left_idx;
@@ -3242,7 +3265,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				if (next != null && next.size == 1) {
 					node.keys[node.right_idx] = next.keys[next.left_idx];
 					node.values[node.right_idx] = next.values[next.left_idx];
-					ret = node.keys[index];
 					deleteNode(next);
 				} else {
 					node.keys[node.right_idx] = null;
@@ -3250,6 +3272,8 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					node.right_idx--;
 					node.size--;
 				}
+				sn = node;
+				si = reverse ? index - 1 : index;
 			} else {
 				System.arraycopy(node.keys, left_idx, node.keys, left_idx + 1, moveFromLeft);
 				System.arraycopy(node.values, left_idx, node.values, left_idx + 1, moveFromLeft);
@@ -3257,7 +3281,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				if (prev != null && prev.size == 1) {
 					node.keys[left_idx] = prev.keys[prev.left_idx];
 					node.values[left_idx] = prev.values[prev.left_idx];
-					ret = node.keys[index + 1];
 					deleteNode(prev);
 				} else {
 					node.keys[left_idx] = null;
@@ -3265,11 +3288,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					node.left_idx++;
 					node.size--;
 				}
+				sn = node;
+				si = reverse ? index : index + 1;
 			}
 		}
 		modCount++;
 		size--;
-		return ret;
+		return newEntry(sn, si);
 	}
 
 	private void deleteNode(Node<K, V> node) {
@@ -3940,23 +3965,16 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				throw new ConcurrentModificationException();
 			}
 
+			Entry<K, V> entry;
 			int idx = lastOffset;
-			K key;
 			if (idx == lastNode.left_idx) {
-				key = backingMap.removeLeftmost(lastNode);
+				entry = backingMap.removeLeftmost(lastNode, false);
 			} else if (idx == lastNode.right_idx) {
-				key = backingMap.removeRightmost(lastNode);
+				entry = backingMap.removeRightmost(lastNode, false);
 			} else {
-				int lastRight = lastNode.right_idx;
-				key = backingMap.removeMiddleElement(node, idx);
-				if (null == key && lastRight > lastNode.right_idx) {
-					// removed from right
-					offset--;
-				}
+				entry = backingMap.removeMiddleElement(node, idx, false);
 			}
-			if (null != key) {
-				// the node has been cleared, need to find new node
-				Entry<K, V> entry = backingMap.find(key);
+			if (entry != null) {
 				node = entry.node;
 				offset = entry.index;
 			}
