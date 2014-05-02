@@ -196,13 +196,10 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		AscendingSubMapIterator(NavigableSubMap<K, V> map) {
 			super(map);
 			TreeMap.Entry<K, V> entry = map.findStartNode();
-			if (entry != null) {
-				if (map.toEnd && !map.checkUpperBound(entry.key)) {
-				} else {
-					node = entry.node;
-					offset = entry.index;
-					boundaryPair = getBoundaryNode();
-				}
+			if (entry != null && map.checkUpperBound(entry.key)) {
+				node = entry.node;
+				offset = entry.index;
+				boundaryPair = getBoundaryNode();
 			}
 		}
 
@@ -842,7 +839,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		void checkInRange(K key, boolean keyInclusive) {
 			boolean isInRange = true;
-			int result = 0;
+			int result;
 			if (map.toEnd) {
 				result = (null != map.comparator()) ? map.comparator().compare(key, map.hi) : toComparable(key).compareTo(map.hi);
 				isInRange = ((!map.hiInclusive) && keyInclusive) ? result < 0 : result <= 0;
@@ -1108,28 +1105,28 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		}
 
 		final TreeMap.Entry<K, V> theSmallestEntry() {
-			TreeMap.Entry<K, V> result = null;
+			TreeMap.Entry<K, V> result;
 			if (!fromStart) {
 				result = m.findSmallestEntry();
 			} else {
 				result = loInclusive ? m.findCeilingEntry(lo) : m.findHigherEntry(lo);
 			}
-			return (null != result && (!toEnd || checkUpperBound(result.getKey()))) ? result : null;
+			return (null != result && checkUpperBound(result.getKey())) ? result : null;
 		}
 
 		final TreeMap.Entry<K, V> theBiggestEntry() {
-			TreeMap.Entry<K, V> result = null;
+			TreeMap.Entry<K, V> result;
 			if (!toEnd) {
 				result = m.findBiggestEntry();
 			} else {
 				result = hiInclusive ? m.findFloorEntry(hi) : m.findLowerEntry(hi);
 			}
-			return (null != result && (!fromStart || checkLowerBound(result.getKey()))) ? result : null;
+			return (null != result && checkLowerBound(result.getKey())) ? result : null;
 		}
 
 		final TreeMap.Entry<K, V> smallerOrEqualEntry(K key) {
 			TreeMap.Entry<K, V> result = findFloorEntry(key);
-			return (null != result && (!fromStart || checkLowerBound(result.getKey()))) ? result : null;
+			return (null != result && checkLowerBound(result.getKey())) ? result : null;
 		}
 
 		private TreeMap.Entry<K, V> findFloorEntry(K key) {
@@ -1143,7 +1140,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				node = findEndNode();
 			}
 
-			if (node != null && fromStart && !checkLowerBound(node.key)) {
+			if (node != null && !checkLowerBound(node.key)) {
 				Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 				if (cmp(object, key, this.lo) > 0) {
 					node = findStartNode();
@@ -1191,7 +1188,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 						}
 						node = node.right;
 					} else { /* search in node */
-						int low = left_idx + 1, mid = 0, high = right_idx - 1;
+						int low = left_idx + 1, mid, high = right_idx - 1;
 						while (low <= high && result != 0) {
 							mid = (low + high) >> 1;
 							result = cmp(object, keyK, keys[mid]);
@@ -1250,7 +1247,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				return null;
 			}
 
-			if (toEnd && !checkUpperBound(node.key)) {
+			if (!checkUpperBound(node.key)) {
 				Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 				if (cmp(object, key, this.hi) < 0) {
 					node = findEndNode();
@@ -1293,7 +1290,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 						foundIndex = right_idx;
 						node = node.right;
 					} else { /* search in node */
-						int low = left_idx + 1, mid = 0, high = right_idx - 1;
+						int low = left_idx + 1, mid, high = right_idx - 1;
 						while (low <= high) {
 							mid = (low + high) >> 1;
 							result = cmp(object, key, keys[mid]);
@@ -1352,7 +1349,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 						if (result == 0) {
 							break;
 						}
-						int low = left_idx + 1, mid = 0, high = right_idx - 1;
+						int low = left_idx + 1, mid, high = right_idx - 1;
 						while (low <= high && result != 0) {
 							mid = (low + high) >> 1;
 							result = cmp(object, key, keys[mid]);
@@ -1382,7 +1379,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		final TreeMap.Entry<K, V> smallerEntry(K key) {
 			TreeMap.Entry<K, V> result = findLowerEntry(key);
-			return (null != result && (!fromStart || checkLowerBound(result.getKey()))) ? result : null;
+			return (null != result && checkLowerBound(result.getKey())) ? result : null;
 		}
 
 		private TreeMap.Entry<K, V> findLowerEntry(K key) {
@@ -1396,7 +1393,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				node = findEndNode();
 			}
 
-			if (fromStart && !checkLowerBound(node.key)) {
+			if (!checkLowerBound(node.key)) {
 				Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 				if (cmp(object, key, this.lo) > 0) {
 					node = findStartNode();
@@ -1418,7 +1415,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				return null;
 			}
 
-			if (toEnd && !checkUpperBound(node.key)) {
+			if (!checkUpperBound(node.key)) {
 				Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 				if (cmp(object, key, this.hi) < 0) {
 					node = findEndNode();
@@ -1463,7 +1460,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					} else { /* search in node */
 						foundNode = node;
 						foundIndex = right_idx;
-						int low = left_idx + 1, mid = 0, high = right_idx - 1;
+						int low = left_idx + 1, mid, high = right_idx - 1;
 						while (low <= high) {
 							mid = (low + high) >> 1;
 							result = cmp(object, key, keys[mid]);
@@ -1767,7 +1764,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		public Map.Entry<K, V> pollFirstEntry() {
-			TreeMap.Entry<K, V> node = null;
+			TreeMap.Entry<K, V> node;
 			if (fromStart) {
 				node = loInclusive ? this.m.findFloorEntry(lo) : this.m.findLowerEntry(lo);
 			} else {
@@ -1788,7 +1785,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		public Map.Entry<K, V> pollLastEntry() {
-			TreeMap.Entry<K, V> node = null;
+			TreeMap.Entry<K, V> node;
 			if (toEnd) {
 				node = hiInclusive ? this.m.findCeilingEntry(hi) : this.m.findHigherEntry(hi);
 			} else {
@@ -1810,10 +1807,10 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> higherEntry(K key) {
 			TreeMap.Entry<K, V> entry = this.m.findLowerEntry(key);
-			if (null != entry && (fromStart && !checkLowerBound(entry.getKey()))) {
+			if (null != entry && !checkLowerBound(entry.getKey())) {
 				entry = loInclusive ? this.m.findFloorEntry(this.lo) : this.m.findLowerEntry(this.lo);
 			}
-			if (null != entry && (!isInRange(entry.getKey()))) {
+			if (null != entry && !isInRange(entry.getKey())) {
 				entry = null;
 			}
 			return newImmutableEntry(entry);
@@ -1822,10 +1819,10 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> lowerEntry(K key) {
 			TreeMap.Entry<K, V> entry = this.m.findHigherEntry(key);
-			if (null != entry && (toEnd && !checkUpperBound(entry.getKey()))) {
+			if (null != entry && !checkUpperBound(entry.getKey())) {
 				entry = hiInclusive ? this.m.findCeilingEntry(this.hi) : this.m.findHigherEntry(this.hi);
 			}
-			if (null != entry && (!isInRange(entry.getKey()))) {
+			if (null != entry && !isInRange(entry.getKey())) {
 				entry = null;
 			}
 			return newImmutableEntry(entry);
@@ -1834,13 +1831,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> ceilingEntry(K key) {
 			Comparable<K> object = m.comparator == null ? toComparable(key) : null;
-			TreeMap.Entry<K, V> entry = null;
+			TreeMap.Entry<K, V> entry;
 			if (toEnd && m.cmp(object, key, lo) >= 0) {
 				entry = loInclusive ? this.m.findFloorEntry(lo) : this.m.findLowerEntry(lo);
 			} else {
 				entry = this.m.findFloorEntry(key);
 			}
-			if (null != entry && (toEnd && !checkUpperBound(entry.getKey()))) {
+			if (null != entry && !checkUpperBound(entry.getKey())) {
 				entry = null;
 			}
 			return newImmutableEntry(entry);
@@ -1849,13 +1846,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Map.Entry<K, V> floorEntry(K key) {
 			Comparable<K> object = m.comparator == null ? toComparable(key) : null;
-			TreeMap.Entry<K, V> entry = null;
+			TreeMap.Entry<K, V> entry;
 			if (fromStart && m.cmp(object, key, hi) <= 0) {
 				entry = hiInclusive ? this.m.findCeilingEntry(hi) : this.m.findHigherEntry(hi);
 			} else {
 				entry = this.m.findCeilingEntry(key);
 			}
-			if (null != entry && (fromStart && !checkLowerBound(entry.getKey()))) {
+			if (null != entry && !checkLowerBound(entry.getKey())) {
 				entry = null;
 			}
 			return newImmutableEntry(entry);
@@ -2168,7 +2165,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				} else if (result == 0) {
 					return true;
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >>> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -2250,7 +2247,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				} else if (result == 0) {
 					return newEntry(node, right_idx);
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -2327,7 +2324,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					if (result == 0) {
 						break;
 					}
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high && result != 0) {
 						mid = (low + high) >> 1;
 						result = cmp(object, key, keys[mid]);
@@ -2388,7 +2385,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					}
 					node = node.right;
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high && result != 0) {
 						mid = (low + high) >> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -2443,7 +2440,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					foundIndex = right_idx;
 					node = node.right;
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -2500,7 +2497,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				} else { /* search in node */
 					foundNode = node;
 					foundIndex = right_idx;
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >> 1;
 						result = cmp(object, key, keys[mid]);
@@ -2580,7 +2577,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				} else if (result == 0) {
 					return node.values[right_idx];
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >>> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -2698,7 +2695,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					node.values[right_idx] = value;
 					return res;
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >>> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -3084,7 +3081,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 					removeRightmost(node);
 					return value;
 				} else { /* search in node */
-					int low = left_idx + 1, mid = 0, high = right_idx - 1;
+					int low = left_idx + 1, mid, high = right_idx - 1;
 					while (low <= high) {
 						mid = (low + high) >>> 1;
 						result = cmp(object, keyK, keys[mid]);
@@ -3943,7 +3940,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 
 			int idx = lastOffset;
-			K key = null;
+			K key;
 			if (idx == lastNode.left_idx) {
 				key = backingMap.removeLeftmost(lastNode);
 			} else if (idx == lastNode.right_idx) {
