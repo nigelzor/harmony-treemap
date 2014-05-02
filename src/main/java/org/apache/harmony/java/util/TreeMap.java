@@ -66,7 +66,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 	transient NavigableSet<K> navigableKeySet;
 
 	static class Node<K, V> implements Cloneable {
-		static final int NODE_SIZE = 64;
+		static final int NODE_SIZE = Integer.getInteger(TreeMap.class.getName() + ".node_size", 64);
 
 		Node<K, V> prev, next;
 		Node<K, V> parent, left, right;
@@ -3180,13 +3180,14 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			node.right_idx--;
 			node.size--;
 			Node<K, V> next = node.next;
-			key = null;
 			if (next != null && next.size == 1) {
 				node.size++;
 				node.right_idx++;
 				node.keys[node.right_idx] = next.keys[next.left_idx];
 				node.values[node.right_idx] = next.values[next.left_idx];
 				deleteNode(next);
+			} else {
+				key = null;
 			}
 		}
 		modCount++;

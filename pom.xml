@@ -58,6 +58,9 @@
 						<exclude>**/*$*</exclude>
 						<exclude>**/Support_*</exclude>
 					</excludes>
+					<systemPropertyVariables>
+						<org.apache.harmony.java.util.TreeMap.node_size>8</org.apache.harmony.java.util.TreeMap.node_size>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 		</plugins>
