@@ -1068,55 +1068,16 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 		@Override
 		public SortedMap<K, V> subMap(K start, K end) {
-			// the exception check is special here, the end should not if equal
-			// to endkey unless start is equal to end
-			if (!checkLowerBound(start) || !checkUpperBound(start)) {
-				throw new IllegalArgumentException();
-			}
-			int result = -1;
-			if (toEnd) {
-				result = (null != comparator()) ? comparator().compare(end, hi) : toComparable(end).compareTo(hi);
-			}
-			if (((!hiInclusive && start.equals(end)) ? result < 0 : result <= 0)) {
-				if ((null != comparator()) ? comparator().compare(start, end) > 0 : toComparable(start).compareTo(end) > 0) {
-					throw new IllegalArgumentException();
-				}
-				return new AscendingSubMap<K, V>(start, true, m, end, false);
-			}
-			throw new IllegalArgumentException();
+			return subMap(start, true, end, false);
 		}
 
 		@Override
 		public SortedMap<K, V> headMap(K end) {
-			if (toEnd) {
-				int result = (null != comparator()) ? comparator().compare(end, hi) : toComparable(end).compareTo(hi);
-				if (result > 0) {
-					throw new IllegalArgumentException();
-				}
-			}
-			if (fromStart) {
-				int result = -((null != comparator()) ? comparator().compare(lo, end) : toComparable(lo).compareTo(end));
-				if (result < 0) {
-					throw new IllegalArgumentException();
-				}
-			}
 			return headMap(end, false);
 		}
 
 		@Override
 		public SortedMap<K, V> tailMap(K start) {
-			if (fromStart) {
-				int result = -((null != comparator()) ? comparator().compare(lo, start) : toComparable(lo).compareTo(start));
-				if (loInclusive ? result < 0 : result <= 0) {
-					throw new IllegalArgumentException();
-				}
-			}
-			if (toEnd) {
-				int result = (null != comparator()) ? comparator().compare(start, hi) : toComparable(start).compareTo(hi);
-				if (hiInclusive ? result > 0 : result >= 0) {
-					throw new IllegalArgumentException();
-				}
-			}
 			return tailMap(start, true);
 		}
 
@@ -1774,26 +1735,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		@Override
 		public Comparator<? super K> comparator() {
 			return reverseComparator;
-		}
-
-		@Override
-		public SortedMap<K, V> subMap(K start, K end) {
-			// the exception check is special here, the end should not if equal
-			// to endkey unless start is equal to end
-			if (!checkLowerBound(start) || !checkUpperBound(start)) {
-				throw new IllegalArgumentException();
-			}
-			int result = -1;
-			if (toEnd) {
-				result = (null != comparator()) ? comparator().compare(end, hi) : toComparable(end).compareTo(hi);
-			}
-			if (((!hiInclusive && start.equals(end)) ? result < 0 : result <= 0)) {
-				if ((null != comparator()) ? comparator().compare(start, end) > 0 : toComparable(start).compareTo(end) > 0) {
-					throw new IllegalArgumentException();
-				}
-				return new DescendingSubMap<K, V>(start, true, m, end, false);
-			}
-			throw new IllegalArgumentException();
 		}
 
 		@Override
