@@ -1008,30 +1008,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		 * The navigable methods.
 		 */
 
-		@Override
-		public abstract Map.Entry<K, V> firstEntry();
-
-		@Override
-		public abstract Map.Entry<K, V> lastEntry();
-
-		@Override
-		public abstract Map.Entry<K, V> pollFirstEntry();
-
-		@Override
-		public abstract Map.Entry<K, V> pollLastEntry();
-
-		@Override
-		public abstract Map.Entry<K, V> higherEntry(K key);
-
-		@Override
-		public abstract Map.Entry<K, V> lowerEntry(K key);
-
-		@Override
-		public abstract Map.Entry<K, V> ceilingEntry(K key);
-
-		@Override
-		public abstract Map.Entry<K, V> floorEntry(K key);
-
 		abstract NavigableSubMap<K, V> descendingSubMap();
 
 		@Override
@@ -1079,12 +1055,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		/*
 		 * The sub-collection methods.
 		 */
-
-		@Override
-		public abstract NavigableSet<K> navigableKeySet();
-
-		@Override
-		public abstract Set<Map.Entry<K, V>> entrySet();
 
 		@Override
 		public Set<K> keySet() {
@@ -1149,15 +1119,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 			return tailMap(start, true);
 		}
-
-		@Override
-		public abstract NavigableMap<K, V> subMap(K start, boolean startKeyInclusive, K end, boolean endKeyInclusive);
-
-		@Override
-		public abstract NavigableMap<K, V> headMap(K end, boolean inclusive);
-
-		@Override
-		public abstract NavigableMap<K, V> tailMap(K start, boolean inclusive);
 
 		/**
 		 * @return false if the key bigger than the end key (if any)
