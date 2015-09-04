@@ -838,7 +838,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 				isInRange = ((!map.hiInclusive) && keyInclusive) ? result < 0 : result <= 0;
 			}
 			if (map.fromStart) {
-				result = (null != comparator()) ? comparator().compare(key, map.lo) : toComparable(key).compareTo(map.lo);
+				result = (null != map.comparator()) ? map.comparator().compare(key, map.lo) : toComparable(key).compareTo(map.lo);
 				isInRange = isInRange && (((!map.loInclusive) && keyInclusive) ? result > 0 : result >= 0);
 			}
 			if (!isInRange) {
