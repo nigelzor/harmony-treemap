@@ -3997,19 +3997,6 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		}
 	}
 
-	static class UnboundedKeyIterator<K, V> extends AbstractMapIterator<K, V> implements Iterator<K> {
-
-		UnboundedKeyIterator(TreeMap<K, V> map) {
-			super(map);
-		}
-
-		@Override
-		public K next() {
-			makeNext();
-			return lastNode.keys[lastOffset];
-		}
-	}
-
 	static class UnboundedValueIterator<K, V> extends AbstractMapIterator<K, V> implements Iterator<V> {
 
 		UnboundedValueIterator(TreeMap<K, V> map) {
