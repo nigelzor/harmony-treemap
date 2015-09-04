@@ -22,27 +22,14 @@ import java.util.Map;
 /**
  * MapEntry is an internal class which provides an implementation of Map.Entry.
  */
-class MapEntry<K, V> implements Map.Entry<K, V>, Cloneable {
+class MapEntry<K, V> implements Map.Entry<K, V> {
 
 	K key;
 	V value;
 
-	MapEntry(K theKey) {
-		key = theKey;
-	}
-
 	MapEntry(K theKey, V theValue) {
 		key = theKey;
 		value = theValue;
-	}
-
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
 	}
 
 	@Override

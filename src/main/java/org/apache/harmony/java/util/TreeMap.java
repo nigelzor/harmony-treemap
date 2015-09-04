@@ -2106,7 +2106,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 			}
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			return null;
+			throw new InternalError();
 		}
 	}
 
