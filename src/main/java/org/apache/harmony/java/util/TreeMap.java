@@ -1825,7 +1825,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> ceilingEntry(K key) {
 			Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 			TreeMap.Entry<K, V> entry;
-			if (toEnd && m.cmp(object, key, lo) >= 0) {
+			if (fromStart && m.cmp(object, key, lo) >= 0) {
 				entry = loInclusive ? this.m.findFloorEntry(lo) : this.m.findLowerEntry(lo);
 			} else {
 				entry = this.m.findFloorEntry(key);
@@ -1840,7 +1840,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 		public Map.Entry<K, V> floorEntry(K key) {
 			Comparable<K> object = m.comparator == null ? toComparable(key) : null;
 			TreeMap.Entry<K, V> entry;
-			if (fromStart && m.cmp(object, key, hi) <= 0) {
+			if (toEnd && m.cmp(object, key, hi) <= 0) {
 				entry = hiInclusive ? this.m.findCeilingEntry(hi) : this.m.findHigherEntry(hi);
 			} else {
 				entry = this.m.findCeilingEntry(key);
