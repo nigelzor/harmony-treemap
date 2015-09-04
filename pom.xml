@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.pulseenergy</groupId>
 	<artifactId>harmony-treemap</artifactId>
-	<version>2.3-SNAPSHOT</version>
+	<version>2.3</version>
 	<packaging>jar</packaging>
 	<description>Apache Harmony's java.util.TreeMap, packaged for reuse</description>
 	<properties>
@@ -15,7 +15,7 @@
 	<scm>
 		<connection>scm:git:ssh://git@github.com/pulseenergy/harmony-treemap.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/pulseenergy/harmony-treemap.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>harmony-treemap-2.3</tag>
 	</scm>
 	<distributionManagement>
 		<repository>
