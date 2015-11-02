@@ -41,6 +41,7 @@ import java.util.SortedSet;
  * TreeMap is an implementation of SortedMap. All optional operations (adding
  * and removing) are supported. The values can be any objects. The keys can be
  * any objects which are comparable to each other either using their natural
+ * order or a specified Comparator.
  *
  * @param <K>
  *            type of key
