@@ -1,4 +1,4 @@
-harmony-treemap
+harmony-treemap [![Build Status](https://travis-ci.org/nigelzor/harmony-treemap.svg?branch=master)](https://travis-ci.org/nigelzor/harmony-treemap)
 ===============
 
 replacement for java.util.TreeMap, ostensibly faster than the default implementation
